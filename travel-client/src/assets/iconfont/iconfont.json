@@ -1,0 +1,16 @@
+{
+  "id": "2550530",
+  "name": "myicon",
+  "font_family": "element-icons",
+  "css_prefix_text": "el-icon-third-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "16840401",
+      "name": "井号",
+      "font_class": "jinghao",
+      "unicode": "e71a",
+      "unicode_decimal": 59162
+    }
+  ]
+}
