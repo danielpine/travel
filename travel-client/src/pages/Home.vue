@@ -199,25 +199,11 @@ export default {
       )
     },
     toggleThumb (item, post, thumblocation) {
-      if (item.thumbed) {
-        this.$http.delete(item.userThumb).then(
-          response => {
-            console.log(thumblocation)
-            this.getThumb(item, thumblocation)
-          },
-          err => {
-            console.log(err)
-            this.notify('操作失败', 'error')
-          }
-        )
-      } else {
-        this.$http
-          .post('/thumbs', {
-            user: `http://localhost:8080/users/${this.userId}`,
-            post: post
-          })
-          .then(
+      if (this.loginIn) {
+        if (item.thumbed) {
+          this.$http.delete(item.userThumb).then(
             response => {
+              console.log(thumblocation)
               this.getThumb(item, thumblocation)
             },
             err => {
@@ -225,6 +211,24 @@ export default {
               this.notify('操作失败', 'error')
             }
           )
+        } else {
+          this.$http
+            .post('/thumbs', {
+              user: `http://localhost:8080/users/${this.userId}`,
+              post: post
+            })
+            .then(
+              response => {
+                this.getThumb(item, thumblocation)
+              },
+              err => {
+                console.log(err)
+                this.notify('操作失败', 'error')
+              }
+            )
+        }
+      } else {
+        this.notify('请先登录', 'warning')
       }
     },
     uploadUrl () {
