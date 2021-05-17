@@ -1,63 +1,78 @@
 <template>
-  <div class="the-header">
+  <div style="width:100%;height:70px">
     <!--图标-->
-    <div class="header-logo" @click="goHome">
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-music"></use>
-      </svg>
-      {{ musicName }}
-    </div>
-    <ul class="navbar" ref="change">
-      <li
-        :class="{ active: item.name === activeName }"
-        v-for="item in navMsg"
-        :key="item.path"
-        @click="goPage(item.path, item.name)"
+    <div class="the-header"  style="margin:0 auto">
+      <div
+        class="header-logo"
+        @click="goHome"
+        :span="6"
       >
-        {{ item.name }}
-      </li>
-      <li>
-        <div class="header-search">
-          <input
-            type="text"
-            placeholder="请输入搜索关键字"
-            @keyup.enter="goSearch()"
-            v-model="keywords"
-          />
-          <div class="search-btn" @click="goSearch()">
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-sousuo"></use>
-            </svg>
+        <div style="display: table;">
+          <div style="display: table-cell;vertical-align: middle;">
+            <img
+              style="margin-top:17px;"
+              src="/static/img/logo.png"
+              width="40"
+              height="40"
+              alt="logo"
+            />
           </div>
+          {{ musicName }}
         </div>
-      </li>
-    </ul>
-    <ul class="navbar" style="float:right" >
-      <li
-        v-show="!loginIn"
-        :class="{ active: item.name === activeName }"
-        v-for="item in loginMsg"
-        :key="item.type"
-        @click="goPage(item.path, item.name)"
-      >
-        {{ item.name }}
-      </li>
-    </ul>
-    <!--设置-->
-    <div class="header-right" v-show="loginIn">
-      <div id="user">
-        <img :src="attachImageUrl(avator)" alt="" />
       </div>
-      <ul class="menu">
+      <ul class="navbar" ref="change">
         <li
-          v-for="(item, index) in menuList"
-          :key="index"
-          @click="goMenuList(item.path)"
+          :class="{ active: item.name === activeName }"
+          v-for="item in navMsg"
+          :key="item.path"
+          @click="goPage(item.path, item.name)"
+        >
+          {{ item.name }}
+        </li>
+        <li>
+          <div class="header-search">
+            <input
+              type="text"
+              placeholder="请输入搜索关键字"
+              @keyup.enter="goSearch()"
+              v-model="keywords"
+            />
+            <div class="search-btn" @click="goSearch()">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-sousuo"></use>
+              </svg>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <ul class="navbar" style="float:right">
+        <li
+          v-show="!loginIn"
+          :class="{ active: item.name === activeName }"
+          v-for="item in loginMsg"
+          :key="item.type"
+          @click="goPage(item.path, item.name)"
         >
           {{ item.name }}
         </li>
       </ul>
+      <!--设置-->
+      <div class="header-right" v-show="loginIn">
+        <div id="user">
+          <img :src="attachImageUrl(avator)" alt="" />
+        </div>
+        <ul class="menu">
+          <li
+            v-for="(item, index) in menuList"
+            :key="index"
+            @click="goMenuList(item.path)"
+          >
+            {{ item.name }}
+          </li>
+        </ul>
+      </div>
     </div>
+    <!-- {{activeName}} -->
   </div>
 </template>
 
@@ -71,7 +86,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      musicName: '网红景点打卡平台',
+      musicName: '网红景点打卡',
       navMsg: [], // 左侧导航栏
       loginMsg: [], // 右侧导航栏
       menuList: [], // 用户下拉菜单项
@@ -113,6 +128,7 @@ export default {
   },
   methods: {
     goHome () {
+      this.changeIndex('首页')
       this.$router.push({ path: '/' })
     },
     goPage (path, value) {

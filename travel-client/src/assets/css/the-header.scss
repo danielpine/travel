@@ -4,10 +4,9 @@
 .the-header {
   position: fixed;
   @include layout;
-  width: 100%;
   height: $header-height;
   line-height: $header-height;
-  padding: $header-padding;
+  // padding: $header-padding;
   background-color: $theme-header-color;
   @include box-shadow($box-shadow);
   box-sizing: border-box;
