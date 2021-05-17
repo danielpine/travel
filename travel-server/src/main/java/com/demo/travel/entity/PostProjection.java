@@ -15,4 +15,5 @@ public interface PostProjection {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	Date getPostTime();
 	Set<Image> getImage();
+	Set<ThumbProjection> getThumb();
 }

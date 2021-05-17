@@ -19,76 +19,86 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 /**
  * 实体类
- * 
- * @author Administrator
  *
+ * @author Administrator
  */
 @Entity
 public class Post implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue
-	private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	private String text;// 内容
+    private String text;// 内容
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date postTime = new Date();// 时间
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date postTime = new Date();// 时间
 
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "userId")
-	private User user;
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId")
+    private User user;
 
-	@Fetch(FetchMode.SUBSELECT)
-	@OneToMany( cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name="postId")
-	private Set<Image> image;
+    @Fetch(FetchMode.SUBSELECT)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId")
+    private Set<Image> image;
 
-	public User getUser() {
-		return user;
-	}
+    @OneToMany(mappedBy = "post")
+    private Set<Thumb> thumb;
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setText(String text) {
-		this.text = text;
-	}
+    public String getText() {
+        return text;
+    }
 
-	public Date getPostTime() {
-		return postTime;
-	}
+    public void setText(String text) {
+        this.text = text;
+    }
 
-	public void setPostTime(Date postTime) {
-		this.postTime = postTime;
-	}
+    public Date getPostTime() {
+        return postTime;
+    }
 
-	public Set<Image> getImage() {
+    public void setPostTime(Date postTime) {
+        this.postTime = postTime;
+    }
+
+    public Set<Image> getImage() {
 //		image.forEach(e -> e.setPost(this));
-		return image;
-	}
+        return image;
+    }
 
-	public void setImage(Set<Image> image) {
-		this.image = image;
-	}
+    public void setImage(Set<Image> image) {
+        this.image = image;
+    }
 
+    public Set<Thumb> getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(Set<Thumb> thumb) {
+        this.thumb = thumb;
+    }
 }

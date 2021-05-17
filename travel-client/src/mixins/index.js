@@ -10,6 +10,28 @@ const mixin = {
     ...mapGetters(['userId', 'loginIn', 'url'])
   },
   methods: {
+    getThumbColor (item) {
+      console.log('getThumbColor')
+      let style = {}
+      item.thumbed = false
+
+      for (const key in item.thumb) {
+        console.log(key)
+      }
+      item.thumb.forEach(element => {
+        console.log(element)
+        if (element.userId === this.userId) {
+          console.log('getThumbColor ==')
+          style = { color: 'red' }
+          item.thumbed = true
+          item.userThumb = element._links.self.href
+        }
+      })
+      return style
+    },
+    fetchThumb (id) {
+      return `呵呵 ${id}`
+    },
     // 提示信息
     notify (title, type, message) {
       this.$notify({

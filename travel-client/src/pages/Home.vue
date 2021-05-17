@@ -85,19 +85,28 @@
       <el-row class="section-content">
         <el-col :span="1">
           <div class="section-user">
-            <img :src="attachImageUrl(item.user.avator || avator)" alt="" />
+            <img
+              :src="attachImageUrl((item.user && item.user.avator) || avator)"
+              alt=""
+            />
           </div>
         </el-col>
         <el-col :span="21" :offset="1">
           <el-row
-            ><h4>{{ item.user.nickname || item.user.name }}</h4></el-row
+            ><h4>
+              {{
+                (item.user && item.user.nickname) ||
+                  (item.user && item.user.name) ||
+                  '用户'
+              }}
+            </h4></el-row
           >
           <el-row class="section-timestamp">{{ item.postTime }}</el-row>
           <el-row>{{ item.text }}</el-row>
           <el-row v-if="item.image" style="width:612px">
             <el-image
-              v-for="img in item.image"
-              :key="img"
+              v-for="(img, index) in item.image"
+              :key="index"
               style="margin:2px 2px 2px 2px"
               :style="getImageWidthHeightDynamic(item.image.length)"
               :src="attachImageUrl(img.url)"
@@ -119,7 +128,18 @@
         <el-col :span="6"
           ><el-link icon="el-icon-chat-dot-square">评论</el-link></el-col
         >
-        <el-col :span="6"><el-link icon="el-icon-thumb">点赞</el-link></el-col>
+        <el-col :span="6"
+          ><el-link
+            icon="el-icon-thumb"
+            :style="getThumbColor(item)"
+            @click="
+              toggleThumb(item, item._links.self.href, item._links.thumb.href)
+            "
+            >{{
+              item.thumb && item.thumb.length > 0 ? item.thumb.length : '赞'
+            }}</el-link
+          ></el-col
+        >
       </el-row>
     </div>
   </div>
@@ -166,6 +186,47 @@ export default {
     this.getPosts()
   },
   methods: {
+    getThumb (item, thumblocation) {
+      this.$http.get(thumblocation).then(
+        response => {
+          console.log(response)
+          item.thumb = response.data._embedded.thumbs
+        },
+        err => {
+          console.log(err)
+          this.notify('操作失败', 'error')
+        }
+      )
+    },
+    toggleThumb (item, post, thumblocation) {
+      if (item.thumbed) {
+        this.$http.delete(item.userThumb).then(
+          response => {
+            console.log(thumblocation)
+            this.getThumb(item, thumblocation)
+          },
+          err => {
+            console.log(err)
+            this.notify('操作失败', 'error')
+          }
+        )
+      } else {
+        this.$http
+          .post('/thumbs', {
+            user: `http://localhost:8080/users/${this.userId}`,
+            post: post
+          })
+          .then(
+            response => {
+              this.getThumb(item, thumblocation)
+            },
+            err => {
+              console.log(err)
+              this.notify('操作失败', 'error')
+            }
+          )
+      }
+    },
     uploadUrl () {
       return `${this.$store.state.configure.HOST}/file/upload?id=${this.userId}&type=post`
     },
