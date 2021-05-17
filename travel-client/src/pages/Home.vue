@@ -32,17 +32,19 @@
             >景点</el-button
           >
         </el-popover>
-        <el-popover placement="bottom" width="480" trigger="click">
-          <div>
+        <el-backtop target=".travel-content"></el-backtop>
+        <el-popover placement="bottom" trigger="click">
+          <div style="max-width:480px;padding-left:20px;">
             <el-upload
-              class="upload-demo"
               :action="uploadUrl()"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
               :on-success="handleAvatarSuccess"
+              :on-error="handleError"
               :before-upload="beforeAvatarUpload"
               :limit="9"
               list-type="picture-card"
+              ref="imgupload"
             >
               <i class="el-icon-plus"></i>
               <div slot="tip" class="el-upload__tip">
@@ -178,14 +180,18 @@ export default {
         this.notify('上传失败', 'error')
       }
     },
+    handleError (err, file, fileList) {
+      console.log(err)
+      this.notify('上传失败', 'error', err.message.message)
+    },
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 10
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传图片只能是 JPG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 10MB!')
+        this.$message.error('上传图片大小不能超过 10MB!')
       }
       return isJPG && isLt2M
     },
@@ -217,6 +223,7 @@ export default {
             response => {
               console.log(response.data)
               this.getPosts()
+              this.$refs.imgupload.clearFiles()
             },
             err => {
               console.log(err)

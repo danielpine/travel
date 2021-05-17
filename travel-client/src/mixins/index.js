@@ -11,10 +11,11 @@ const mixin = {
   },
   methods: {
     // 提示信息
-    notify (title, type) {
+    notify (title, type, message) {
       this.$notify({
         title: title,
-        type: type
+        type: type,
+        message: message
       })
     },
     getImageWidthHeightDynamic (length) {
