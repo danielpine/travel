@@ -3,10 +3,26 @@
 
 .the-header {
   position: fixed;
+  width: $header-width;
+  left: 50%; 
+  margin-left: $header-margin-left !important;
   @include layout;
   height: $header-height;
   line-height: $header-height;
   // padding: $header-padding;
+  // background-color: $theme-header-color;
+  // @include box-shadow($box-shadow);
+  // box-sizing: border-box;
+  z-index: 100;
+}
+
+.the-header-bg {
+  position: fixed;
+  width: 100%;
+  @include layout;
+  height: $header-height;
+  line-height: $header-height;
+  padding: $header-padding;
   background-color: $theme-header-color;
   @include box-shadow($box-shadow);
   box-sizing: border-box;

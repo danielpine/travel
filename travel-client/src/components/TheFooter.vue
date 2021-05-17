@@ -13,7 +13,7 @@ export default {
     return {
       footerList: [
         `关于 | 帮助 | 条款 | 反馈`,
-        `Copyright © 2021 Web Music`
+        `Copyright © 2021 Hot Mark`
       ]
     }
   }

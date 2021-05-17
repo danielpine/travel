@@ -1,5 +1,5 @@
 <template>
-  <div style="width:100%;height:70px">
+  <div class="the-header-bg">
     <!--图标-->
     <div class="the-header"  style="margin:0 auto">
       <div
@@ -10,7 +10,7 @@
         <div style="display: table;">
           <div style="display: table-cell;vertical-align: middle;">
             <img
-              style="margin-top:17px;"
+              style="margin-top:7px;margin-right:5px"
               src="/static/img/logo.png"
               width="40"
               height="40"

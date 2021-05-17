@@ -86,15 +86,27 @@
             <img :src="attachImageUrl(item.user.avator || avator)" alt="" />
           </div>
         </el-col>
-        <el-col :span="21" :offset="2">
+        <el-col :span="21" :offset="1">
           <el-row
             ><h4>{{ item.user.nickname || item.user.name }}</h4></el-row
           >
           <el-row class="section-timestamp">{{ item.postTime }}</el-row>
           <el-row>{{ item.text }}</el-row>
+          <el-row v-if="item.image" style="width:612px">
+            <el-image
+              v-for="img in item.image"
+              :key="img"
+              style="margin:2px 2px 2px 2px"
+              :style="getImageWidthHeightDynamic(item.image.length)"
+              :src="attachImageUrl(img.url)"
+              :preview-src-list="attachImageUrlList(item.image)"
+            >
+            </el-image>
+          </el-row>
         </el-col>
       </el-row>
       <el-divider></el-divider>
+      <!-- {{ item }} -->
       <el-row class="section-bottom" type="flex" justify="space-between">
         <el-col :span="6"
           ><el-link icon="el-icon-star-off" class="no-text-decoration"
@@ -132,11 +144,7 @@ export default {
       posts: '',
       postForm: {
         text: '',
-        image: [
-          {
-            url: 'url'
-          }
-        ]
+        image: []
       },
       fileList: []
     }
@@ -194,7 +202,17 @@ export default {
           this.postForm.text !== '' &&
           this.postForm.text !== undefined
         ) {
+          let that = this
           this.postForm.user = `http://localhost:8080/users/${this.userId}`
+          this.fileList.forEach(e => {
+            console.log(e)
+            if (e.response.code === 1) {
+              that.postForm.image.push({
+                url: e.response.data.url
+              })
+            }
+          })
+
           this.$http.post('/posts', this.postForm).then(
             response => {
               console.log(response.data)

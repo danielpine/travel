@@ -3,10 +3,10 @@
     <!-- <song-audio/> -->
     <the-header/>
     <!-- <the-aside></the-aside> -->
-    <router-view class="music-content"/>
+    <router-view class="travel-content"/>
     <!-- <play-bar/> -->
     <scroll-top/>
-    <the-footer/>
+    <!-- <the-footer/> -->
   </div>
 </template>
 

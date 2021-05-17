@@ -17,7 +17,25 @@ const mixin = {
         type: type
       })
     },
+    getImageWidthHeightDynamic (length) {
+      switch (length) {
+        case 1:
+          return { width: '400px', height: '400px' }
+        case 2:
+        case 4:
+          return { width: '300px', height: '300px' }
+        default:
+          return { width: '200px', height: '200px' }
+      }
+    },
     // 获取图片信息
+    attachImageUrlList (image) {
+      let l = []
+      image.forEach(e => {
+        l.push(this.attachImageUrl(e.url))
+      })
+      return l
+    },
     attachImageUrl (srcUrl) {
       return srcUrl
         ? this.$store.state.configure.HOST + srcUrl || '../assets/img/user.jpg'
