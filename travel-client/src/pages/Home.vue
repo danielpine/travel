@@ -81,7 +81,7 @@
         >
       </el-row>
     </div>
-    <div class="section" v-for="(item, index) in songList" :key="index">
+    <div class="section" v-for="(item, index) in postList" :key="index">
       <el-row class="section-content">
         <el-col :span="1">
           <div class="section-user">
@@ -194,7 +194,7 @@
                     item, //item
                     item.id, //commentId
                     item._links.self.href, //post
-                    item.user._links.self.href, //toUser
+                    item.user.id, //toUser
                     'main', //commentType
                     null //commentRoot
                   )
@@ -244,7 +244,7 @@
                           v-show="
                             comment.user.id == userId && comment.showDelete
                           "
-                          @click="toggleComment(comment, 'sub')"
+                          @click="delComment(item, comment._links.self.href)"
                           >删除</el-button
                         ><el-button
                           type="text"
@@ -282,7 +282,7 @@
                             item, //item
                             comment.id, //commentId
                             null, //post
-                            comment._links.user.href, //toUser
+                            comment.user.id, //toUser
                             'sub', //commentType
                             comment._links.self.href //commentRoot
                           )
@@ -291,13 +291,109 @@
                       >
                     </el-row>
                   </el-row>
-                    <!-- Sub Comment -->
-                    <el-row
-                      v-for="subcomment in comment.sub"
-                      :key="subcomment.id"
-                    >
-                      {{ 'subcomment' }}
+                  <el-divider></el-divider>
+                  <!-- Sub Comment -->
+                  <el-row
+                    v-for="subcomment in comment.sub"
+                    :key="subcomment.id"
+                    style="background-color:azure;padding-left:5px;"
+                  >
+                    <el-row>
+                      <span class="name">{{
+                        subcomment.user.nickname || subcomment.user.name
+                      }}</span>
+                      <span
+                        v-if="
+                          subcomment.toUser &&
+                            subcomment.user.id !== subcomment.toUser.id
+                        "
+                      >
+                        <span class="reply">回复</span>
+                        <span class="name">{{
+                          subcomment.toUser.nickname ||
+                            subcomment.ustoUserer.name
+                        }}</span>
+                      </span>
+                      :
+                      <span class="content">
+                        {{ subcomment.content }}
+                      </span>
                     </el-row>
+                    <div
+                      @mouseover="$set(subcomment, 'showDelete', true)"
+                      @mouseout="$set(subcomment, 'showDelete', false)"
+                    >
+                      <el-row
+                        class="section-bottom"
+                        type="flex"
+                        justify="space-between"
+                      >
+                        <el-col :span="2" style="text-align:left" class="date">
+                          {{ getDateDuration(new Date(subcomment.createTime)) }}
+                        </el-col>
+                        <el-col
+                          :span="4"
+                          style="width:200px;text-align:right;margin-right:3px"
+                        >
+                          <el-button
+                            type="text"
+                            size="mini"
+                            v-show="
+                              subcomment.user.id == userId &&
+                                subcomment.showDelete
+                            "
+                            @click="
+                              delComment(item, subcomment._links.self.href)
+                            "
+                            >删除</el-button
+                          ><el-button
+                            type="text"
+                            size="mini"
+                            @click="toggleComment(subcomment, 'next')"
+                            >回复</el-button
+                          ></el-col
+                        >
+                      </el-row>
+                    </div>
+                    <el-row v-show="commentShow['next' + subcomment.id]">
+                      <el-row>
+                        <el-col :span="24">
+                          <el-input
+                            class="comment-input"
+                            :ref="'next' + subcomment.id"
+                            type="textarea"
+                            :placeholder="
+                              '回复:' +
+                                (subcomment.user && subcomment.user.nickname) ||
+                                (subcomment.user && subcomment.user.name) ||
+                                '用户'
+                            "
+                            :rows="1"
+                            v-model="commentForm['next' + subcomment.id]"
+                          >
+                          </el-input></el-col
+                      ></el-row>
+                      <el-row>
+                        <el-button
+                          type="warning"
+                          size="mini"
+                          class="sub-btn pull-right-2"
+                          @click="
+                            postComment(
+                              item, //item
+                              subcomment.id, //commentId
+                              null, //post
+                              subcomment.user.id, //toUser
+                              'next', //commentType
+                              comment._links.self.href //commentRoot
+                            )
+                          "
+                          >评论</el-button
+                        >
+                      </el-row>
+                    </el-row>
+                    <el-divider></el-divider>
+                  </el-row>
                 </el-col>
               </el-row>
               <el-divider></el-divider>
@@ -314,7 +410,7 @@ import { mapGetters } from 'vuex'
 import mixin from '../mixins'
 // import { swiperList } from '../assets/data/swiper'
 import Swiper from '../components/Swiper'
-// import { getSongList } from '../api/index'
+// import { getpostList } from '../api/index'
 
 export default {
   name: 'home',
@@ -324,13 +420,7 @@ export default {
   },
   data () {
     return {
-      list: [],
-      articleId: 1,
-      activeReplyCommentId: -1,
-      activeReplyText: {},
-      swiperList: [], // 轮播图列表
-      songList: [], // 歌单列表
-      singerList: [], // 歌手列表
+      postList: [],
       posts: '',
       postForm: {
         text: '',
@@ -369,6 +459,17 @@ export default {
       console.log(e)
       this.activeReplyCommentId = -1
     },
+    delComment (item, location) {
+      this.$http
+        .delete(location.replace('{?projection}', ''))
+        .then(response => {
+          console.log(response)
+          this.getComment(item)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
     getComment (item) {
       this.$http
         .get(`posts/${item.id}/comment?projection=commentProjection`)
@@ -380,14 +481,13 @@ export default {
           console.log(error)
         })
     },
-    postComment (item, id, post, toUser, commentType, commentRoot) {
-      console.log('postComment')
+    postComment (item, id, post, toUserId, commentType, commentRoot) {
       if (this.loginIn) {
         this.$http
           .post('comments', {
             post: post,
             user: `http://localhost:8080/users/${this.userId}`,
-            toUser: toUser,
+            toUser: `http://localhost:8080/users/${toUserId}`,
             content: this.commentForm[commentType + id],
             commentType: commentType,
             root: commentRoot ? commentRoot.replace('{?projection}', '') : null
@@ -395,6 +495,9 @@ export default {
           .then(res => {
             console.log(res)
             this.commentForm[commentType + id] = ''
+            if (commentType !== 'main') {
+              this.$set(this.commentShow, commentType + id, false)
+            }
             this.getComment(item)
           })
           .catch(error => {
@@ -582,8 +685,8 @@ export default {
         .then(
           response => {
             console.log(response.data)
-            this.songList = response.data._embedded.posts
-            this.songList.forEach(item => {
+            this.postList = response.data._embedded.posts
+            this.postList.forEach(item => {
               // item.favorite = false
               this.isFavorite(item)
             })
