@@ -1,12 +1,11 @@
 package com.demo.travel.entity;
 
-
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "postId"})})
-public class Thumb implements Serializable {
+public class Favorite implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,8 +18,6 @@ public class Thumb implements Serializable {
     @JoinColumn(name = "userId")
     private User user;
 
-    @Column(name = "userId", updatable = false, insertable = false)
-    private String userId;
 
     @ManyToOne(targetEntity = Post.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "postId")
@@ -50,11 +47,5 @@ public class Thumb implements Serializable {
         this.post = post;
     }
 
-    public String getUserId() {
-        return userId;
-    }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 }

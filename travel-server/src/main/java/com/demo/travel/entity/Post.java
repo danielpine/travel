@@ -21,11 +21,6 @@ import org.hibernate.annotations.FetchMode;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-/**
- * 实体类
- *
- * @author Administrator
- */
 @Entity
 public class Post implements Serializable {
 
@@ -52,6 +47,9 @@ public class Post implements Serializable {
 
     @OneToMany(mappedBy = "post")
     private Set<Thumb> thumb;
+
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comment;
 
     public User getUser() {
         return user;
@@ -100,5 +98,13 @@ public class Post implements Serializable {
 
     public void setThumb(Set<Thumb> thumb) {
         this.thumb = thumb;
+    }
+
+    public Set<Comment> getComment() {
+        return comment;
+    }
+
+    public void setComment(Set<Comment> comment) {
+        this.comment = comment;
     }
 }

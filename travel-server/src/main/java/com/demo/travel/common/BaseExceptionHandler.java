@@ -2,6 +2,7 @@ package com.demo.travel.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +20,13 @@ public class BaseExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result error(Exception e) {
+        logger.error("BaseExceptionHandler : " + e.getMessage(), e);
+        return new Result(false, StatusCode.ERROR, "执行出错 " + e.getMessage());
+    }
+    @ExceptionHandler(value = ResourceNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Result error(ResourceNotFoundException e) {
         logger.error("BaseExceptionHandler : " + e.getMessage(), e);
         return new Result(false, StatusCode.ERROR, "执行出错 " + e.getMessage());
     }

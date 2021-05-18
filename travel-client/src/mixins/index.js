@@ -10,37 +10,85 @@ const mixin = {
     ...mapGetters(['userId', 'loginIn', 'url'])
   },
   methods: {
-    getThumbColor (item) {
-      console.log('getThumbColor')
+    getDateDuration (date) {
+      /* eslint-disable  */
+      let d_seconds,
+        d_minutes,
+        d_hours,
+        d_days,
+        timeNow = parseInt(new Date().getTime() / 1000),
+        d,
+        Y = date.getFullYear(),
+        M = date.getMonth() + 1,
+        D = date.getDate(),
+        H = date.getHours(),
+        m = date.getMinutes(),
+        s = date.getSeconds()
+      // 小于10的在前面补0
+      if (M < 10) {
+        M = '0' + M
+      }
+      if (D < 10) {
+        D = '0' + D
+      }
+      if (H < 10) {
+        H = '0' + H
+      }
+      if (m < 10) {
+        m = '0' + m
+      }
+      if (s < 10) {
+        s = '0' + s
+      }
+
+      d = timeNow - date / 1000
+      d_days = parseInt(d / 86400)
+      d_hours = parseInt(d / 3600)
+      d_minutes = parseInt(d / 60)
+      d_seconds = parseInt(d)
+
+      if (d_days > 0 && d_days < 3) {
+        return d_days + '天前'
+      } else if (d_days <= 0 && d_hours > 0) {
+        return d_hours + '小时前'
+      } else if (d_hours <= 0 && d_minutes > 0) {
+        return d_minutes + '分钟前'
+      } else if (d_seconds < 60) {
+        if (d_seconds <= 0) {
+          return '刚刚'
+        } else {
+          return d_seconds + '秒前'
+        }
+      } else if (d_days >= 3 && d_days < 30) {
+        return M + '-' + D + ' ' + H + ':' + m
+      } else if (d_days >= 30) {
+        return Y + '-' + M + '-' + D + ' ' + H + ':' + m
+      }
+    },
+    getThumbColor(item) {
       let style = {}
       item.thumbed = false
-
-      for (const key in item.thumb) {
-        console.log(key)
-      }
       item.thumb.forEach(element => {
-        console.log(element)
         if (element.userId === this.userId) {
-          console.log('getThumbColor ==')
-          style = { color: 'red' }
+          style = { color: 'coral' }
           item.thumbed = true
           item.userThumb = element._links.self.href
         }
       })
       return style
     },
-    fetchThumb (id) {
+    fetchThumb(id) {
       return `呵呵 ${id}`
     },
     // 提示信息
-    notify (title, type, message) {
+    notify(title, type, message) {
       this.$notify({
         title: title,
         type: type,
         message: message
       })
     },
-    getImageWidthHeightDynamic (length) {
+    getImageWidthHeightDynamic(length) {
       switch (length) {
         case 1:
           return { width: '400px', height: '400px' }
@@ -52,34 +100,34 @@ const mixin = {
       }
     },
     // 获取图片信息
-    attachImageUrlList (image) {
+    attachImageUrlList(image) {
       let l = []
       image.forEach(e => {
         l.push(this.attachImageUrl(e.url))
       })
       return l
     },
-    attachImageUrl (srcUrl) {
+    attachImageUrl(srcUrl) {
       return srcUrl
         ? this.$store.state.configure.HOST + srcUrl || '../assets/img/user.jpg'
         : ''
     },
-    attachBirth (val) {
+    attachBirth(val) {
       let birth = String(val).match(/[0-9-]+(?=\s)/)
       return Array.isArray(birth) ? birth[0] : birth
     },
     // 得到名字后部分
-    replaceFName (str) {
+    replaceFName(str) {
       let arr = str.split('-')
       return arr[1]
     },
     // 得到名字前部分
-    replaceLName (str) {
+    replaceLName(str) {
       let arr = str.split('-')
       return arr[0]
     },
     // 播放
-    toplay: function (id, url, pic, index, name, lyric) {
+    toplay: function(id, url, pic, index, name, lyric) {
       this.$store.commit('setListIndex', index)
       this.play(id, url, pic, name, lyric)
       if (this.loginIn) {
@@ -98,7 +146,7 @@ const mixin = {
           })
       }
     },
-    play: function (id, url, pic, name, lyric) {
+    play: function(id, url, pic, name, lyric) {
       url = this.$store.state.configure.HOST + url
       console.log(url, this.url)
       this.$store.commit('setIsPlay', true)
@@ -129,7 +177,7 @@ const mixin = {
       this.$store.commit('setLyric', this.parseLyric(lyric))
     },
     // 解析歌词
-    parseLyric (text) {
+    parseLyric(text) {
       let lines = text.split('\n')
       let pattern = /\[\d{2}:\d{2}.(\d{3}|\d{2})\]/g
       let result = []
@@ -154,13 +202,13 @@ const mixin = {
           }
         }
       }
-      result.sort(function (a, b) {
+      result.sort(function(a, b) {
         return a[0] - b[0]
       })
       return result
     },
     // 搜索音乐
-    getSong () {
+    getSong() {
       if (!this.$route.query.keywords) {
         this.$store.commit('setListOfSongs', [])
         return

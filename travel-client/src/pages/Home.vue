@@ -117,19 +117,36 @@
         </el-col>
       </el-row>
       <el-divider></el-divider>
-      <!-- {{ item }} -->
       <el-row class="section-bottom" type="flex" justify="space-between">
         <el-col :span="6"
-          ><el-link icon="el-icon-star-off" class="no-text-decoration"
-            >收藏</el-link
+          ><el-button
+            type="text"
+            icon="el-icon-star-off"
+            class="no-text-decoration"
+            :style="{ color: item.favorite ? 'coral' : '#808080' }"
+            @click="toggleFavorite(item, item._links.self.href)"
+          >
+            {{ item.favorite ? '已收藏' : '收藏' }}</el-button
           ></el-col
         >
-        <el-col :span="6"><el-link icon="el-icon-share">转发</el-link></el-col>
         <el-col :span="6"
-          ><el-link icon="el-icon-chat-dot-square">评论</el-link></el-col
+          ><el-button type="text" icon="el-icon-close">举报</el-button></el-col
         >
         <el-col :span="6"
-          ><el-link
+          ><el-button
+            type="text"
+            icon="el-icon-chat-dot-square"
+            @click="toggleComment(item, 'main')"
+            >{{
+              item.comment && item.comment.length > 0
+                ? item.comment.length
+                : '评论'
+            }}</el-button
+          ></el-col
+        >
+        <el-col :span="6"
+          ><el-button
+            type="text"
             icon="el-icon-thumb"
             :style="getThumbColor(item)"
             @click="
@@ -137,9 +154,156 @@
             "
             >{{
               item.thumb && item.thumb.length > 0 ? item.thumb.length : '赞'
-            }}</el-link
+            }}</el-button
           ></el-col
         >
+      </el-row>
+      <el-divider></el-divider>
+      <el-row style="background-color:aliceblue;padding-top:3px">
+        <div class="container">
+          <div v-show="commentShow['main' + item.id]">
+            <el-row>
+              <el-col :span="2">
+                <div class="section-user-comment">
+                  <img :src="attachImageUrl(avator)" alt="用户头像" />
+                </div>
+              </el-col>
+              <el-col :span="22">
+                <el-input
+                  class="comment-input"
+                  :ref="'main' + item.id"
+                  type="textarea"
+                  :placeholder="
+                    '回复:' + (item.user && item.user.nickname) ||
+                      (item.user && item.user.name) ||
+                      '用户'
+                  "
+                  :rows="1"
+                  v-model="commentForm['main' + item.id]"
+                >
+                </el-input
+              ></el-col>
+            </el-row>
+            <el-row>
+              <el-button
+                type="warning"
+                size="mini"
+                class="sub-btn pull-right"
+                @click="
+                  postComment(
+                    item, //item
+                    item.id, //commentId
+                    item._links.self.href, //post
+                    item.user._links.self.href, //toUser
+                    'main', //commentType
+                    null //commentRoot
+                  )
+                "
+                >评论</el-button
+              >
+            </el-row>
+            <el-divider></el-divider>
+            <el-row v-for="comment in item.comment" :key="comment.id">
+              <el-row>
+                <el-col :span="2">
+                  <div class="section-user-comment">
+                    <img
+                      :src="attachImageUrl(comment.user.avator)"
+                      alt="用户头像"
+                    />
+                  </div>
+                </el-col>
+                <el-col :span="22">
+                  <el-row>
+                    <span class="name"
+                      >{{ comment.user.nickname || comment.user.name }}:</span
+                    >
+                    <span class="content">
+                      {{ comment.content }}
+                    </span>
+                  </el-row>
+                  <div
+                    @mouseover="$set(comment, 'showDelete', true)"
+                    @mouseout="$set(comment, 'showDelete', false)"
+                  >
+                    <el-row
+                      class="section-bottom"
+                      type="flex"
+                      justify="space-between"
+                    >
+                      <el-col :span="2" style="text-align:left" class="date">
+                        {{ getDateDuration(new Date(comment.createTime)) }}
+                      </el-col>
+                      <el-col
+                        :span="4"
+                        style="width:200px;text-align:right;margin-right:3px"
+                      >
+                        <el-button
+                          type="text"
+                          size="mini"
+                          v-show="
+                            comment.user.id == userId && comment.showDelete
+                          "
+                          @click="toggleComment(comment, 'sub')"
+                          >删除</el-button
+                        ><el-button
+                          type="text"
+                          size="mini"
+                          @click="toggleComment(comment, 'sub')"
+                          >回复</el-button
+                        ></el-col
+                      >
+                    </el-row>
+                  </div>
+                  <el-row v-show="commentShow['sub' + comment.id]">
+                    <el-row>
+                      <el-col :span="24">
+                        <el-input
+                          class="comment-input"
+                          :ref="'sub' + comment.id"
+                          type="textarea"
+                          :placeholder="
+                            '回复:' + (comment.user && comment.user.nickname) ||
+                              (comment.user && comment.user.name) ||
+                              '用户'
+                          "
+                          :rows="1"
+                          v-model="commentForm['sub' + comment.id]"
+                        >
+                        </el-input></el-col
+                    ></el-row>
+                    <el-row>
+                      <el-button
+                        type="warning"
+                        size="mini"
+                        class="sub-btn pull-right-2"
+                        @click="
+                          postComment(
+                            item, //item
+                            comment.id, //commentId
+                            null, //post
+                            comment._links.user.href, //toUser
+                            'sub', //commentType
+                            comment._links.self.href //commentRoot
+                          )
+                        "
+                        >评论</el-button
+                      >
+                    </el-row>
+                  </el-row>
+                    <!-- Sub Comment -->
+                    <el-row
+                      v-for="subcomment in comment.sub"
+                      :key="subcomment.id"
+                    >
+                      {{ 'subcomment' }}
+                    </el-row>
+                </el-col>
+              </el-row>
+              <el-divider></el-divider>
+            </el-row>
+          </div>
+        </div>
       </el-row>
     </div>
   </div>
@@ -148,7 +312,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import mixin from '../mixins'
-import { swiperList } from '../assets/data/swiper'
+// import { swiperList } from '../assets/data/swiper'
 import Swiper from '../components/Swiper'
 // import { getSongList } from '../api/index'
 
@@ -160,6 +324,10 @@ export default {
   },
   data () {
     return {
+      list: [],
+      articleId: 1,
+      activeReplyCommentId: -1,
+      activeReplyText: {},
       swiperList: [], // 轮播图列表
       songList: [], // 歌单列表
       singerList: [], // 歌手列表
@@ -168,6 +336,8 @@ export default {
         text: '',
         image: []
       },
+      commentForm: {},
+      commentShow: {},
       fileList: []
     }
   },
@@ -180,12 +350,78 @@ export default {
       'avator' // 用户头像
     ])
   },
-  created () {
-    this.swiperList = swiperList
-    // 获取歌单列表
+  created () {},
+  mounted () {
     this.getPosts()
   },
   methods: {
+    toggleComment (item, t) {
+      this.$set(this.commentShow, t + item.id, !this.commentShow[t + item.id])
+      let vm = this
+      setTimeout(function () {
+        vm.activeReplyCommentId = t + item.id
+      }, 5)
+      setTimeout(function () {
+        vm.$refs[t + item.id][0].focus()
+      }, 10)
+    },
+    replyBlur (e) {
+      console.log(e)
+      this.activeReplyCommentId = -1
+    },
+    getComment (item) {
+      this.$http
+        .get(`posts/${item.id}/comment?projection=commentProjection`)
+        .then(response => {
+          console.log(response)
+          item.comment = response.data._embedded.comments
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    postComment (item, id, post, toUser, commentType, commentRoot) {
+      console.log('postComment')
+      if (this.loginIn) {
+        this.$http
+          .post('comments', {
+            post: post,
+            user: `http://localhost:8080/users/${this.userId}`,
+            toUser: toUser,
+            content: this.commentForm[commentType + id],
+            commentType: commentType,
+            root: commentRoot ? commentRoot.replace('{?projection}', '') : null
+          })
+          .then(res => {
+            console.log(res)
+            this.commentForm[commentType + id] = ''
+            this.getComment(item)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      } else {
+        this.notify('请先登录', 'warning')
+      }
+    },
+    isFavorite (item) {
+      if (this.loginIn) {
+        this.$http
+          .get(
+            `favorites/search/findByPostIdAndUserId?postId=${item.id}&userId=${this.userId}`
+          )
+          .then(
+            response => {
+              console.log(response)
+              this.$set(item, 'favorite', response.data)
+            },
+            err => {
+              console.log(err)
+              this.$set(item, 'favorite', null)
+            }
+          )
+      }
+    },
     getThumb (item, thumblocation) {
       this.$http.get(thumblocation).then(
         response => {
@@ -220,6 +456,40 @@ export default {
             .then(
               response => {
                 this.getThumb(item, thumblocation)
+              },
+              err => {
+                console.log(err)
+                this.notify('操作失败', 'error')
+              }
+            )
+        }
+      } else {
+        this.notify('请先登录', 'warning')
+      }
+    },
+    toggleFavorite (item, post) {
+      if (this.loginIn) {
+        if (item.favorite) {
+          this.$http
+            .delete(`http://localhost:8080/favorites/${item.favorite.id}`)
+            .then(
+              response => {
+                this.isFavorite(item)
+              },
+              err => {
+                console.log(err)
+                this.notify('操作失败', 'error')
+              }
+            )
+        } else {
+          this.$http
+            .post('/favorites', {
+              user: `http://localhost:8080/users/${this.userId}`,
+              post: post
+            })
+            .then(
+              response => {
+                this.isFavorite(item)
               },
               err => {
                 console.log(err)
@@ -313,6 +583,10 @@ export default {
           response => {
             console.log(response.data)
             this.songList = response.data._embedded.posts
+            this.songList.forEach(item => {
+              // item.favorite = false
+              this.isFavorite(item)
+            })
           },
           err => {
             console.log(err)

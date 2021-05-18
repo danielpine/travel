@@ -1,6 +1,6 @@
 <template>
   <div class="login-in">
-    <login-logo />
+    <!-- <login-logo /> -->
     <div class="login">
       <div class="login-head">
         <span>帐号登录</span>

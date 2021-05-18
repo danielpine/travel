@@ -44,7 +44,7 @@ axios.interceptors.response.use(
           })
           break
         case 403:
-          // console.log('管理员权限已修改请重新登录')
+          console.log('管理员权限已修改请重新登录')
           // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
           setTimeout(() => {
             router.replace({
@@ -58,7 +58,7 @@ axios.interceptors.response.use(
 
         // 404请求不存在
         case 404:
-          // console.log('请求页面飞到火星去了')
+          console.log('请求页面飞到火星去了')
           break
       }
       return Promise.reject(error.response)

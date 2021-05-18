@@ -1,12 +1,8 @@
 <template>
   <div class="the-header-bg">
     <!--图标-->
-    <div class="the-header"  style="margin:0 auto">
-      <div
-        class="header-logo"
-        @click="goHome"
-        :span="6"
-      >
+    <div class="the-header" style="margin:0 auto">
+      <div class="header-logo" @click="goHome" :span="6">
         <div style="display: table;">
           <div style="display: table-cell;vertical-align: middle;">
             <img
@@ -152,6 +148,9 @@ export default {
         this.$router.push({ path: path })
       } else {
         this.$store.commit('setLoginIn', false)
+        this.$store.commit('setUserId', null)
+        this.$store.commit('setUsername', null)
+        this.$store.commit('setAvator', null)
         this.$router.go(0)
       }
     },
