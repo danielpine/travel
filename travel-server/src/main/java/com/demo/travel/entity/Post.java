@@ -2,7 +2,10 @@ package com.demo.travel.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -15,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.demo.travel.util.Dates;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -49,7 +53,7 @@ public class Post implements Serializable {
     private Set<Thumb> thumb;
 
     @OneToMany(mappedBy = "post")
-    private Set<Comment> comment;
+    private List<Comment> comment;
 
     public User getUser() {
         return user;
@@ -100,11 +104,11 @@ public class Post implements Serializable {
         this.thumb = thumb;
     }
 
-    public Set<Comment> getComment() {
-        return comment;
+    public List<Comment> getComment() {
+        return comment.stream().sorted(Dates.DescComparator).collect(Collectors.toList());
     }
 
-    public void setComment(Set<Comment> comment) {
+    public void setComment(List<Comment> comment) {
         this.comment = comment;
     }
 }

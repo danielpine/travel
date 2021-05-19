@@ -3,7 +3,7 @@ package com.demo.travel.entity;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Projection(name = "commentProjection", types = {Comment.class})
 public interface CommentProjection {
@@ -22,5 +22,5 @@ public interface CommentProjection {
 
     Date getCreateTime();
 
-    Set<CommentProjection> getSub();
+    List<CommentProjection> getSub();
 }

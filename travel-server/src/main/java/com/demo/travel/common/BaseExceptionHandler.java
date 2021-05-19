@@ -27,7 +27,7 @@ public class BaseExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Result error(ResourceNotFoundException e) {
-        logger.error("BaseExceptionHandler : " + e.getMessage(), e);
+        logger.error("BaseExceptionHandler : " + e.getMessage());
         return new Result(false, StatusCode.ERROR, "执行出错 " + e.getMessage());
     }
 }

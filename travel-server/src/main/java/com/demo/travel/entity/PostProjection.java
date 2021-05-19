@@ -1,6 +1,7 @@
 package com.demo.travel.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.rest.core.config.Projection;
@@ -16,5 +17,5 @@ public interface PostProjection {
 	Date getPostTime();
 	Set<Image> getImage();
 	Set<ThumbProjection> getThumb();
-	Set<CommentProjection> getComment();
+	List<CommentProjection> getComment();
 }

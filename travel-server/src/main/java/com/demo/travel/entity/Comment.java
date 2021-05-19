@@ -1,10 +1,13 @@
 package com.demo.travel.entity;
 
+import com.demo.travel.util.Dates;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Comment {
@@ -34,7 +37,7 @@ public class Comment {
     private Comment root;
 
     @OneToMany(mappedBy = "root", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Comment> sub;
+    private List<Comment> sub;
 
     public Long getId() {
         return id;
@@ -60,11 +63,11 @@ public class Comment {
         this.root = root;
     }
 
-    public Set<Comment> getSub() {
+    public List<Comment> getSub() {
         return sub;
     }
 
-    public void setSub(Set<Comment> sub) {
+    public void setSub(List<Comment> sub) {
         this.sub = sub;
     }
 

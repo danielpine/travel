@@ -81,6 +81,20 @@
         >
       </el-row>
     </div>
+
+    <div class="section">
+      <el-menu
+        :default-active="activeIndex"
+        class="el-menu-demo"
+        mode="horizontal"
+        @select="handleSelect"
+      >
+        <el-menu-item index="1">最新</el-menu-item>
+        <el-menu-item index="2">热门</el-menu-item>
+        <el-menu-item index="3">猜你喜欢</el-menu-item>
+      </el-menu>
+    </div>
+
     <div class="section" v-for="(item, index) in postList" :key="index">
       <el-row class="section-content">
         <el-col :span="1">
@@ -159,48 +173,52 @@
         >
       </el-row>
       <el-divider></el-divider>
-      <el-row style="background-color:aliceblue;padding-top:3px">
+      <el-row
+        style="background-color:aliceblue;padding-top:3px;padding-right:5px"
+      >
         <div class="container">
           <div v-show="commentShow['main' + item.id]">
-            <el-row>
-              <el-col :span="2">
-                <div class="section-user-comment">
-                  <img :src="attachImageUrl(avator)" alt="用户头像" />
-                </div>
-              </el-col>
-              <el-col :span="22">
-                <el-input
-                  class="comment-input"
-                  :ref="'main' + item.id"
-                  type="textarea"
-                  :placeholder="
-                    '回复:' + (item.user && item.user.nickname) ||
-                      (item.user && item.user.name) ||
-                      '用户'
+            <el-row style="margin:12px 0">
+              <el-row>
+                <el-col :span="2">
+                  <div class="section-user-comment">
+                    <img :src="attachImageUrl(avator)" alt="用户头像" />
+                  </div>
+                </el-col>
+                <el-col :span="22">
+                  <el-input
+                    class="comment-input"
+                    :ref="'main' + item.id"
+                    type="textarea"
+                    :placeholder="
+                      '回复:' + (item.user && item.user.nickname) ||
+                        (item.user && item.user.name) ||
+                        '用户'
+                    "
+                    :rows="1"
+                    v-model="commentForm['main' + item.id]"
+                  >
+                  </el-input
+                ></el-col>
+              </el-row>
+              <el-row style="margin: 10px 0">
+                <el-button
+                  type="warning"
+                  size="mini"
+                  class="sub-btn pull-right"
+                  @click="
+                    postComment(
+                      item, //item
+                      item.id, //commentId
+                      item._links.self.href, //post
+                      item.user.id, //toUser
+                      'main', //commentType
+                      null //commentRoot
+                    )
                   "
-                  :rows="1"
-                  v-model="commentForm['main' + item.id]"
+                  >评论</el-button
                 >
-                </el-input
-              ></el-col>
-            </el-row>
-            <el-row>
-              <el-button
-                type="warning"
-                size="mini"
-                class="sub-btn pull-right"
-                @click="
-                  postComment(
-                    item, //item
-                    item.id, //commentId
-                    item._links.self.href, //post
-                    item.user.id, //toUser
-                    'main', //commentType
-                    null //commentRoot
-                  )
-                "
-                >评论</el-button
-              >
+              </el-row>
             </el-row>
             <el-divider></el-divider>
             <el-row v-for="comment in item.comment" :key="comment.id">
@@ -232,7 +250,7 @@
                       justify="space-between"
                     >
                       <el-col :span="2" style="text-align:left" class="date">
-                        {{ getDateDuration(new Date(comment.createTime)) }}
+                        {{ getDateDuration(new Date(comment.createTime)) + '' }}
                       </el-col>
                       <el-col
                         :span="4"
@@ -255,7 +273,10 @@
                       >
                     </el-row>
                   </div>
-                  <el-row v-show="commentShow['sub' + comment.id]">
+                  <el-row
+                    v-show="commentShow['sub' + comment.id]"
+                    style="margin:12px 0"
+                  >
                     <el-row>
                       <el-col :span="24">
                         <el-input
@@ -272,7 +293,7 @@
                         >
                         </el-input></el-col
                     ></el-row>
-                    <el-row>
+                    <el-row style="margin:12px 0">
                       <el-button
                         type="warning"
                         size="mini"
@@ -355,7 +376,10 @@
                         >
                       </el-row>
                     </div>
-                    <el-row v-show="commentShow['next' + subcomment.id]">
+                    <el-row
+                      v-show="commentShow['next' + subcomment.id]"
+                      style="margin:12px 0"
+                    >
                       <el-row>
                         <el-col :span="24">
                           <el-input
@@ -373,7 +397,7 @@
                           >
                           </el-input></el-col
                       ></el-row>
-                      <el-row>
+                      <el-row style="margin:12px 0">
                         <el-button
                           type="warning"
                           size="mini"
@@ -428,7 +452,8 @@ export default {
       },
       commentForm: {},
       commentShow: {},
-      fileList: []
+      fileList: [],
+      activeIndex: '1'
     }
   },
   computed: {
@@ -474,8 +499,11 @@ export default {
       this.$http
         .get(`posts/${item.id}/comment?projection=commentProjection`)
         .then(response => {
-          console.log(response)
-          item.comment = response.data._embedded.comments
+          let t = response.data._embedded.comments.reverse()
+          t.forEach(s => {
+            s.sub = s.sub.reverse()
+          })
+          item.comment = t
         })
         .catch(error => {
           console.log(error)
