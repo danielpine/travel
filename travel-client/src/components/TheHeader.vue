@@ -13,7 +13,7 @@
               alt="logo"
             />
           </div>
-          {{ musicName }}
+          {{ siteName }}
         </div>
       </div>
       <ul class="navbar" ref="change">
@@ -82,7 +82,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      musicName: '网红景点打卡',
+      siteName: '热门地点打卡',
       navMsg: [], // 左侧导航栏
       loginMsg: [], // 右侧导航栏
       menuList: [], // 用户下拉菜单项

@@ -26,6 +26,10 @@
     padding: $content-padding;
     background-color: $color-white;
     box-sizing: border-box;
+    .el-menu-item {
+      height: 30px;
+      line-height: 30px;
+    }
     .section-title {
       height: 60px;
       line-height: 60px;

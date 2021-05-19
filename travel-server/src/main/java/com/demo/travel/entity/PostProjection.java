@@ -10,12 +10,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Projection(name = "postProjection", types = { PostProjection.class })
 public interface PostProjection {
-	UserProjection getUser();
 	Long getId();
 	String getText();
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	Date getPostTime();
 	Set<Image> getImage();
+	Location getLocation();
+	UserProjection getUser();
 	Set<ThumbProjection> getThumb();
 	List<CommentProjection> getComment();
 }

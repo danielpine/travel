@@ -10,6 +10,12 @@ const mixin = {
     ...mapGetters(['userId', 'loginIn', 'url'])
   },
   methods: {
+    initPostForm () {
+      return {
+        text: '',
+        image: []
+      }
+    },
     getDateDuration (date) {
       /* eslint-disable  */
       let d_seconds,

@@ -3,7 +3,7 @@
     <!--轮播图-->
     <!-- <swiper :swiperList="swiperList" /> -->
     <div class="section">
-      <el-row>
+      <el-row style="margin:12px 0">
         <br />
         <h4>有什么新发现告诉大家？</h4>
       </el-row>
@@ -12,28 +12,14 @@
         <el-input
           class="comment-input"
           type="textarea"
-          placeholder="打卡新景点..."
+          placeholder="打卡新地点..."
           :rows="2"
           v-model="postForm.text"
         >
         </el-input>
       </el-row>
-      <el-row>
-        <el-popover placement="bottom" width="400" trigger="click">
-          <div>
-            上传图片
-          </div>
-          <el-button
-            size="small"
-            type="success"
-            plain
-            slot="reference"
-            icon="el-icon-position"
-            >景点</el-button
-          >
-        </el-popover>
-        <el-backtop target=".travel-content"></el-backtop>
-        <el-popover placement="bottom" trigger="click">
+      <el-row style="margin:12px 0">
+        <el-popover placement="bottom" trigger="hover">
           <div style="max-width:480px;padding-left:20px;">
             <el-upload
               :action="uploadUrl()"
@@ -54,22 +40,24 @@
           </div>
           <el-button
             size="small"
-            type="danger"
+            type="primary"
             plain
             slot="reference"
             icon="el-icon-picture"
             >图片</el-button
           >
         </el-popover>
-        <el-popover placement="bottom" width="400" trigger="click">
-          <div></div>
+        <el-popover placement="bottom" width="600" trigger="hover">
+          <div>
+            <map-search :visible="visible" :map-form="location"></map-search>
+          </div>
           <el-button
             size="small"
-            type="primary"
+            type="success"
             plain
             slot="reference"
-            icon="el-icon-third-jinghao"
-            >主题</el-button
+            icon="el-icon-location-outline"
+            >{{ location.address ? location.address : '地点' }}</el-button
           >
         </el-popover>
         <el-button
@@ -85,13 +73,14 @@
     <div class="section">
       <el-menu
         :default-active="activeIndex"
-        class="el-menu-demo"
+        class="section-el-menu"
         mode="horizontal"
         @select="handleSelect"
       >
         <el-menu-item index="1">最新</el-menu-item>
         <el-menu-item index="2">热门</el-menu-item>
-        <el-menu-item index="3">猜你喜欢</el-menu-item>
+        <el-menu-item index="3">推荐</el-menu-item>
+        <el-menu-item index="4">猜你喜欢</el-menu-item>
       </el-menu>
     </div>
 
@@ -128,6 +117,11 @@
             >
             </el-image>
           </el-row>
+          <el-row v-if="item.location">
+            <el-link icon="el-icon-location-outline">{{
+              item.location.address
+            }}</el-link>
+          </el-row>
         </el-col>
       </el-row>
       <el-divider></el-divider>
@@ -135,7 +129,7 @@
         <el-col :span="6"
           ><el-button
             type="text"
-            icon="el-icon-star-off"
+            :icon="item.favorite ? 'el-icon-star-on' : 'el-icon-star-off'"
             class="no-text-decoration"
             :style="{ color: item.favorite ? 'coral' : '#808080' }"
             @click="toggleFavorite(item, item._links.self.href)"
@@ -434,26 +428,31 @@ import { mapGetters } from 'vuex'
 import mixin from '../mixins'
 // import { swiperList } from '../assets/data/swiper'
 import Swiper from '../components/Swiper'
+import MapSearch from '../components/amap/MapSearch'
 // import { getpostList } from '../api/index'
 
 export default {
   name: 'home',
   mixins: [mixin],
   components: {
-    Swiper
+    Swiper,
+    MapSearch
   },
   data () {
     return {
       postList: [],
       posts: '',
-      postForm: {
-        text: '',
-        image: []
+      postForm: this.initPostForm(),
+      location: {
+        address: '',
+        lng: '',
+        lat: ''
       },
       commentForm: {},
       commentShow: {},
       fileList: [],
-      activeIndex: '1'
+      activeIndex: '1',
+      visible: true
     }
   },
   computed: {
@@ -470,6 +469,7 @@ export default {
     this.getPosts()
   },
   methods: {
+    handleSelect () {},
     toggleComment (item, t) {
       this.$set(this.commentShow, t + item.id, !this.commentShow[t + item.id])
       let vm = this
@@ -685,9 +685,18 @@ export default {
             }
           })
 
+          if (
+            this.location.address !== undefined &&
+            this.location.address !== ''
+          ) {
+            this.postForm.location = JSON.parse(JSON.stringify(this.location))
+          }
+
           this.$http.post('/posts', this.postForm).then(
             response => {
               console.log(response.data)
+              this.postForm = this.initPostForm()
+              this.location = {}
               this.getPosts()
               this.$refs.imgupload.clearFiles()
             },

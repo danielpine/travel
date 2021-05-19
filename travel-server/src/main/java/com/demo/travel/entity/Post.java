@@ -7,16 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.demo.travel.util.Dates;
 import org.hibernate.annotations.Fetch;
@@ -49,6 +40,11 @@ public class Post implements Serializable {
     @JoinColumn(name = "postId")
     private Set<Image> image;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "postId")
+    private Location location;
+
+    @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "post")
     private Set<Thumb> thumb;
 
@@ -110,5 +106,13 @@ public class Post implements Serializable {
 
     public void setComment(List<Comment> comment) {
         this.comment = comment;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }
