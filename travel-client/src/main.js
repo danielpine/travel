@@ -16,11 +16,16 @@ import '@/assets/js/iconfont2.js'
 import '@/assets/js/iconfont3.js'
 import axios from 'axios'
 import VueAMap from 'vue-amap'
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
 Vue.use(Router)
 Vue.use(Vuex)
 Vue.use(ElementUI)
 Vue.use(VueAMap)
+Vue.use(VueQuillEditor)
 
 Vue.prototype.$http = axios
 

@@ -6,7 +6,7 @@ const navMsg = [
   },
   {
     name: '话题',
-    path: '/setting'
+    path: '/topic-list'
   },
   {
     name: '我的',
