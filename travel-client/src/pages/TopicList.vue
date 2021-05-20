@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <div class="section song-list">
+    <div class="topic-section">
+      <editor style="height: 325px;"></editor>
+    </div>
+    <!-- <div class="section song-list">
       <ul class="song-list-header">
         <li
           v-for="(item, index) in songStyle"
@@ -25,7 +28,7 @@
           </el-pagination>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

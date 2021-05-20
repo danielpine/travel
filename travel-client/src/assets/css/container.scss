@@ -48,9 +48,9 @@
     word-break: break-all;
   }
 
-  .section {
+  .topic-section {
     width: 800px;
-    height: 600px;
+    min-height: 400px;
     margin: auto;
     padding: $content-padding;
     background-color: $color-white;
