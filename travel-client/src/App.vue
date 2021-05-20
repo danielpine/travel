@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="app">
     <!-- <song-audio/> -->
     <the-header/>
     <!-- <the-aside></the-aside> -->
@@ -33,4 +33,7 @@ export default {
 
 <style lang="scss" scoped>
 @import './assets/css/app.scss';
+.app{
+   min-height:100vh
+}
 </style>

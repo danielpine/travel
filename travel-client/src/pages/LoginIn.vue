@@ -107,7 +107,7 @@ export default {
             setTimeout(function () {
               _this.changeIndex('首页')
               _this.$router.push({ path: '/' })
-              _this.$router.go(0)
+              // _this.$router.go(0)
             }, 2000)
           } else {
             _this.notify('用户名或密码错误', 'error')

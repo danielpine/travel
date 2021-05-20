@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="topic-section">
-      <editor style="height: 325px;"></editor>
+      <editor></editor>
     </div>
     <!-- <div class="section song-list">
       <ul class="song-list-header">
@@ -37,7 +37,6 @@ import ContentList from '../components/ContentList'
 import Editor from '../components/editor/Editor'
 import { mapGetters } from 'vuex'
 import { songStyle } from '../assets/data/songList'
-import { getSongList, getSongListOfStyle } from '../api/index'
 
 export default {
   name: 'song-list',
@@ -66,44 +65,11 @@ export default {
   },
   mounted () {
     this.songStyle = songStyle
-    this.handleChangeView('全部歌单')
   },
   methods: {
     // 获取当前页
     handleCurrentChange (val) {
       this.currentPage = val
-    },
-    // 获取歌单
-    handleChangeView: function (name) {
-      this.activeName = name
-      this.albumDatas = []
-      if (name === '全部歌单') {
-        this.getSongList(this.cur_page)
-      } else {
-        this.getSongListOfStyle(name)
-      }
-    },
-    // 获取全部歌单
-    getSongList (page) {
-      getSongList()
-        .then(res => {
-          this.currentPage = 1
-          this.albumDatas = res
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    // 通过类别获取歌单
-    getSongListOfStyle (style) {
-      getSongListOfStyle(style)
-        .then(res => {
-          this.currentPage = 1
-          this.albumDatas = res
-        })
-        .catch(err => {
-          console.log(err)
-        })
     }
   }
 }

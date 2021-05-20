@@ -42,3 +42,12 @@ div {
 .el-slider__runway {
   background-color: $color-blue !important;
 }
+
+.ql-container.ql-snow {
+  border: 0 !important;
+}
+
+.ql-toolbar.ql-snow {
+  border: 0 !important;
+  border-top: 1px solid #ccc;
+}

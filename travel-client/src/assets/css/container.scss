@@ -1,5 +1,24 @@
 @import "var.scss";
 @import "global.scss";
+.container {
+  .topic-section {
+    width: 800px;
+    min-height: 92vh;
+    margin: auto;
+    padding: $content-padding;
+    background-color: $color-white;
+    box-sizing: border-box;
+  }
+}
+
+.pull-right {
+  float: right;
+}
+
+.pull-right-2 {
+  float: right;
+  margin-right: 2px;
+}
 
 .song-list {
   margin: 30px 150px;
@@ -32,110 +51,4 @@
 .pagination {
   @include layout(center);
   transform: translateY(15px);
-}
-
-
-.container {
-  .name {
-    margin-left: 0;
-    font-size: 12px;
-    color: #eb7350;
-  }
-
-  .content {
-    color: #333333;
-    font-size: 12px;
-    word-break: break-all;
-  }
-
-  .topic-section {
-    width: 800px;
-    min-height: 400px;
-    margin: auto;
-    padding: $content-padding;
-    background-color: $color-white;
-    box-sizing: border-box;
-
-    .el-menu-item {
-      height: 30px;
-      line-height: 30px;
-    }
-
-    .section-title {
-      height: 60px;
-      line-height: 60px;
-      padding-top: 10px;
-      font-size: 28px;
-      font-weight: 500;
-      text-align: center;
-      color: $color-black;
-      box-sizing: border-box;
-    }
-
-    .section-content {
-      border-color: darkgray;
-    }
-
-    .section-user-comment {
-      overflow: hidden;
-      width: $header-user-comment-width;
-      height: $header-user-comment-height;
-      // border-radius: 25%;
-      margin: auto;
-      cursor: pointer;
-
-      img {
-        width: 100%;
-      }
-    }
-
-    .section-user {
-      overflow: hidden;
-      width: $header-user-width;
-      height: $header-user-height;
-      border-radius: $header-user-radius;
-      margin: auto;
-      cursor: pointer;
-
-      img {
-        width: 100%;
-      }
-    }
-
-    .section-timestamp {
-      height: 20px;
-      line-height: 20px;
-      font-size: 12px;
-      font-weight: normal;
-      box-sizing: border-box;
-      color: #808080;
-    }
-
-    .section-bottom {
-      height: 35px;
-      line-height: 35px;
-      font-size: 14px;
-      font-weight: normal;
-      box-sizing: border-box;
-      color: #808080;
-      text-align: center;
-
-      .no-text-decoration {
-        text-decoration: none;
-      }
-
-      .el-button--text {
-        color: #808080;
-      }
-    }
-  }
-}
-
-.pull-right {
-  float: right;
-}
-
-.pull-right-2 {
-  float: right;
-  margin-right: 2px;
 }

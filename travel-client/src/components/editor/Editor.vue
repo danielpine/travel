@@ -1,15 +1,28 @@
 <template>
-  <quill-editor
-    class="editor"
-    ref="myTextEditor"
-    v-model="content"
-    :options="editorOption"
-    @blur="onEditorBlur($event)"
-    @focus="onEditorFocus($event)"
-    @ready="onEditorReady($event)"
-    @change="onEditorChange($event)"
-  >
-  </quill-editor>
+  <div>
+    <div class="editor-title">
+      <textarea
+        class="editor-input"
+        tabindex="1"
+        maxlength="70"
+        placeholder="添加标题"
+        rows="1"
+        style="resize: none; overflow: hidden; height: 22px;margin:10px 0"
+      ></textarea>
+    </div>
+    <el-divider></el-divider>
+    <quill-editor
+      class="editor"
+      ref="myTextEditor"
+      v-model="content"
+      :options="editorOption"
+      @blur="onEditorBlur($event)"
+      @focus="onEditorFocus($event)"
+      @ready="onEditorReady($event)"
+      @change="onEditorChange($event)"
+    >
+    </quill-editor>
+  </div>
 </template>
 <script>
 export default {
@@ -65,3 +78,28 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+@import '../../assets/css/editor.scss';
+</style>
+
+<style lang="css" scoped>
+.editor-input {
+  padding: 0 10px;
+  box-sizing: border-box;
+  font-size: 0.928em;
+  background: #fff;
+  -webkit-appearance: none;
+  width: 100%;
+  padding: 0 10px;
+  font-size: 1.3333em;
+  font-weight: 600;
+  line-height: 1.42;
+  border: 0;
+  background-color: none;
+}
+
+textarea {
+  outline: none;
+}
+</style>

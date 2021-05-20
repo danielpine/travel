@@ -13,14 +13,7 @@ export const updateUserMsg = params => post(`user/update`, params)
 export const getUserOfId = id => get(`users/${id}`)
 
 // =======================> 歌单 API
-// 获取全部歌单
-export const getSongList = () => get('songList')
-// 获取个性推荐歌单
-export const getRecommendSongList = id => get(`songList/recommend/${id}`)
 // 获取歌单类型
-export const getSongListOfStyle = style =>
-  get(`songList/style/detail?style=${style}`)
-// 返回标题包含文字的歌单
 export const getSongListOfLikeTitle = keywords =>
   get(`songList/likeTitle/detail?title=${keywords}`)
 // 返回歌单里指定歌单ID的歌曲
@@ -82,4 +75,3 @@ export const download = url =>
 // =======================> 评论 API
 // 添加评论
 export const updateSongHistory = params => post(`history/update`, params)
-export const putPost = params => post(`/posts`, params)

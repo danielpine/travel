@@ -756,3 +756,12 @@ export default {
   margin: 2px 0;
 }
 </style>
+
+<style scoped>
+body {
+  background-color: #b4daf0;
+  background-image: url('/static/body_repeat.png');
+  background-repeat: repeat-x;
+  background-position: center 0;
+}
+</style>
