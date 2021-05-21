@@ -29,6 +29,16 @@ const router = {
       component: () => import('@/pages/TopicNew')
     },
     {
+      path: '/topic-preview',
+      name: 'topic-preview',
+      component: () => import('@/pages/TopicPreview')
+    },
+    {
+      path: '/topic-view/:postId',
+      name: 'topic-view',
+      component: () => import('@/pages/TopicView')
+    },
+    {
       path: '/my-music',
       name: 'my-music',
       component: () => import('@/pages/MyMusic')

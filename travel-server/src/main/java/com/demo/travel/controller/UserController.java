@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.demo.travel.common.PageResult;
@@ -23,257 +24,256 @@ import java.util.Map;
 
 /**
  * 控制器层
- * 
- * @author Administrator
  *
+ * @author Administrator
  */
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
 public class UserController {
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private RedisTemplate redisTemplate;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
-	@Autowired
-	private HttpServletRequest request;
+    @Autowired
+    private HttpServletRequest request;
 
-	@Autowired
-	BCryptPasswordEncoder encoder;
+    @Autowired
+    BCryptPasswordEncoder encoder;
 
-	@Autowired
-	JwtUtil jwtUtil;
+    @Autowired
+    JwtUtil jwtUtil;
 
-	/**
-	 * 查询全部数据
-	 *
-	 * @return
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public Result findAll() {
-		return new Result(true, StatusCode.OK, "查询成功", userService.findAll());
-	}
+    /**
+     * 查询全部数据
+     *
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public Result findAll() {
+        return new Result(true, StatusCode.OK, "查询成功", userService.findAll());
+    }
 
-	/**
-	 * 根据ID查询
-	 *
-	 * @param id ID
-	 * @return
-	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Result findById(@PathVariable String id) {
-		return new Result(true, StatusCode.OK, "查询成功", userService.findById(id));
-	}
+    /**
+     * 根据ID查询
+     *
+     * @param id ID
+     * @return
+     */
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Result findById(@PathVariable String id) {
+        return new Result(true, StatusCode.OK, "查询成功", userService.findById(id));
+    }
 
-	/**
-	 * 分页+多条件查询
-	 * 
-	 * @param searchMap 查询条件封装
-	 * @param page      页码
-	 * @param size      页大小
-	 * @return 分页结果
-	 */
-	@RequestMapping(value = "/search/{page}/{size}", method = RequestMethod.POST)
-	public Result findSearch(@RequestBody Map searchMap, @PathVariable int page, @PathVariable int size) {
-		Page<User> pageList = userService.findSearch(searchMap, page, size);
-		return new Result(true, StatusCode.OK, "查询成功",
-		        new PageResult<User>(pageList.getTotalElements(), pageList.getContent()));
-	}
+    /**
+     * 分页+多条件查询
+     *
+     * @param searchMap 查询条件封装
+     * @param page      页码
+     * @param size      页大小
+     * @return 分页结果
+     */
+    @RequestMapping(value = "/search/{page}/{size}", method = RequestMethod.POST)
+    public Result findSearch(@RequestBody Map searchMap, @PathVariable int page, @PathVariable int size) {
+        Page<User> pageList = userService.findSearch(searchMap, page, size);
+        return new Result(true, StatusCode.OK, "查询成功",
+                new PageResult<User>(pageList.getTotalElements(), pageList.getContent()));
+    }
 
-	/**
-	 * 根据条件查询
-	 * 
-	 * @param searchMap
-	 * @return
-	 */
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public Result findSearch(@RequestBody Map searchMap) {
-		return new Result(true, StatusCode.OK, "查询成功", userService.findSearch(searchMap));
-	}
+    /**
+     * 根据条件查询
+     *
+     * @param searchMap
+     * @return
+     */
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public Result findSearch(@RequestBody Map searchMap) {
+        return new Result(true, StatusCode.OK, "查询成功", userService.findSearch(searchMap));
+    }
 
-	/**
-	 * 增加
-	 * 
-	 * @param user
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	public Result add(@RequestBody User user) {
-		userService.add(user);
-		return new Result(true, StatusCode.OK, "增加成功");
-	}
+    /**
+     * 增加
+     *
+     * @param user
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    public Result add(@RequestBody User user) {
+        userService.add(user);
+        return new Result(true, StatusCode.OK, "增加成功");
+    }
 
-	/**
-	 * 修改
-	 * 
-	 * @param user
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public Result update(@RequestBody User user, @PathVariable String id) {
-		User oldUser = userService.findById(id);
-		user.setId(id);
-		user.setPassword(oldUser.getPassword());
-		userService.update(user);
-		return new Result(true, StatusCode.OK, "修改成功");
-	}
+    /**
+     * 修改
+     *
+     * @param user
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public Result update(@RequestBody User user, @PathVariable String id) {
+        User oldUser = userService.findById(id);
+        user.setId(id);
+        user.setPassword(oldUser.getPassword());
+        userService.update(user);
+        return new Result(true, StatusCode.OK, "修改成功");
+    }
 
-	/**
-	 * 修改
-	 * 
-	 * @param user
-	 */
-	@RequestMapping(value = "/change", method = RequestMethod.POST, consumes = "application/json")
-	public Result update(@RequestBody User user, HttpSession session) {
-		User us = (User) session.getAttribute("user");
-		user.setId(us.getId());
-		user.setPassword(us.getPassword());
-		userService.update(user);
-		return new Result(true, StatusCode.OK, "修改成功");
-	}
+    /**
+     * 修改
+     *
+     * @param user
+     */
+    @RequestMapping(value = "/change", method = RequestMethod.POST, consumes = "application/json")
+    public Result update(@RequestBody User user, HttpSession session) {
+        User us = (User) session.getAttribute("user");
+        user.setId(us.getId());
+        user.setPassword(us.getPassword());
+        userService.update(user);
+        return new Result(true, StatusCode.OK, "修改成功");
+    }
 
-	/**
-	 * 删除
-	 * 
-	 * @param id
-	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public Result delete(@PathVariable String id) {
-		userService.deleteById(id);
-		return new Result(true, StatusCode.OK, "删除成功");
-	}
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public Result delete(@PathVariable String id) {
+        userService.deleteById(id);
+        return new Result(true, StatusCode.OK, "删除成功");
+    }
 
-	/**
-	 * 发送短信验证码
-	 *
-	 * @return
-	 */
-	@RequestMapping(value = "/sendsms/{mobile}", method = RequestMethod.POST)
-	public Result sendSms(@PathVariable String mobile) {
+    /**
+     * 发送短信验证码
+     *
+     * @return
+     */
+    @RequestMapping(value = "/sendsms/{mobile}", method = RequestMethod.POST)
+    public Result sendSms(@PathVariable String mobile) {
 
-		userService.sendSms(mobile);
-		return new Result(true, StatusCode.SMS, "验证码已发送至你的手机，请注意查收");
-	}
+        userService.sendSms(mobile);
+        return new Result(true, StatusCode.SMS, "验证码已发送至你的手机，请注意查收");
+    }
 
-	/**
-	 * 发送邮箱验证码
-	 * 
-	 * @param email
-	 * @return
-	 */
-	@RequestMapping(value = "/sendEmail/{email}", method = RequestMethod.POST)
-	public Result sendEmail(@PathVariable String email) {
+    /**
+     * 发送邮箱验证码
+     *
+     * @param email
+     * @return
+     */
+    @RequestMapping(value = "/sendEmail/{email}", method = RequestMethod.POST)
+    public Result sendEmail(@PathVariable String email) {
 
-		userService.sendEmail(email);
-		return new Result(true, StatusCode.SMS, "验证码已发送至你的邮箱，请注意查收");
-	}
+        userService.sendEmail(email);
+        return new Result(true, StatusCode.SMS, "验证码已发送至你的邮箱，请注意查收");
+    }
 
-	/**
-	 * 用户注册
-	 * 
-	 * @param code
-	 * @param user
-	 * @return
-	 */
-	@RequestMapping(value = "/register/{code}", method = RequestMethod.POST)
-	public Result regist(@PathVariable String code, @RequestBody User user) {
-		// 得到redis缓存中的验证码
-		String checkcodeRedis = (String) redisTemplate.opsForValue().get("checkcode_" + user.getMobile());
+    /**
+     * 用户注册
+     *
+     * @param code
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/register/{code}", method = RequestMethod.POST)
+    public Result regist(@PathVariable String code, @RequestBody User user) {
+        // 得到redis缓存中的验证码
+        String checkcodeRedis = (String) redisTemplate.opsForValue().get("checkcode_" + user.getMobile());
 
-		if (checkcodeRedis == null) {
-			return new Result(false, StatusCode.ERROR, "请获取验证码");
-		}
-		if (!checkcodeRedis.equals(code)) {
-			return new Result(false, StatusCode.ERROR, "验证码错误");
-		} else {
+        if (checkcodeRedis == null) {
+            return new Result(false, StatusCode.ERROR, "请获取验证码");
+        }
+        if (!checkcodeRedis.equals(code)) {
+            return new Result(false, StatusCode.ERROR, "验证码错误");
+        } else {
 
-			userService.add(user);
-			return new Result(true, StatusCode.OK, "注册成功");
-		}
-	}
+            userService.add(user);
+            return new Result(true, StatusCode.OK, "注册成功");
+        }
+    }
 
-	/**
-	 * 判断账号是否存在
-	 * 
-	 * @param user
-	 * @return
-	 */
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	@ResponseBody
-	public Result findsame(@RequestBody User user) {
+    /**
+     * 判断账号是否存在
+     *
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseBody
+    public Result findsame(@RequestBody User user) {
 
-		System.out.println("拿到的手机号码" + user.getMobile());
-		String phone = user.getMobile();
+        System.out.println("拿到的手机号码" + user.getMobile());
+        String phone = user.getMobile();
 
-		User userphone = userService.findByMobile(phone);
+        User userphone = userService.findByMobile(phone);
 
-		if (userphone == null) {
-			return new Result(true, StatusCode.OK, "该手机号可以注册");
-		}
-		return new Result(false, StatusCode.ERROR, "该手机号已经被注册");
-	}
+        if (userphone == null) {
+            return new Result(true, StatusCode.OK, "该手机号可以注册");
+        }
+        return new Result(false, StatusCode.ERROR, "该手机号已经被注册");
+    }
 
-	@RequestMapping(value = "/email", method = RequestMethod.POST)
-	@ResponseBody
-	public Result findemail(@RequestBody User user) {
+    @RequestMapping(value = "/email", method = RequestMethod.POST)
+    @ResponseBody
+    public Result findemail(@RequestBody User user) {
 
-		System.out.println("拿到的email" + user.getEmail());
-		String email = user.getEmail();
+        System.out.println("拿到的email" + user.getEmail());
+        String email = user.getEmail();
 
-		User useremail = userService.findByEmail(email);
+        User useremail = userService.findByEmail(email);
 
-		if (useremail == null) {
-			return new Result(true, StatusCode.OK, "该邮箱可以注册");
-		}
-		return new Result(false, StatusCode.ERROR, "该邮箱已经被注册");
-	}
+        if (useremail == null) {
+            return new Result(true, StatusCode.OK, "该邮箱可以注册");
+        }
+        return new Result(false, StatusCode.ERROR, "该邮箱已经被注册");
+    }
 
-	/**
-	 * 用户登录
-	 * 
-	 * @param loginMap
-	 * @return
-	 */
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public com.demo.travel.bo.Result<?> login(HttpServletRequest request) {
+    /**
+     * 用户登录
+     *
+     * @param loginMap
+     * @return
+     */
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public com.demo.travel.bo.Result<?> login(HttpServletRequest request) {
 //		String mobile = loginMap.get("login");
-		String username = request.getParameter("login");
-		String password = request.getParameter("password");
-		System.out.println("打印手机号：--->" + username);
-		String ph = "^[1][3578]\\d{9}$";
-		System.out.println("正则---->" + username.matches(ph));
-		User user = username.matches(ph)
-		        ? userService.findByMobileAndPassword(username, password)
-		        : userService.findByNameAndPassword(username, password);
-		if (user != null) {
-			request.getSession().setAttribute("user", user);
-			String token = jwtUtil.createJWT(user.getId(), user.getNickname(), "user");
-			Map<String, String> map = new HashMap<>();
-			map.put("id", user.getId());
-			map.put("token", token);
-			map.put("name", user.getName());
-			map.put("avator", user.getAvator());
-			return ResultUtil.success(map, "登录成功");
+        String username = request.getParameter("login");
+        String password = request.getParameter("password");
+        System.out.println("打印手机号：--->" + username);
+        String ph = "^[1][3578]\\d{9}$";
+        System.out.println("正则---->" + username.matches(ph));
+        User user = username.matches(ph)
+                ? userService.findByMobileAndPassword(username, password)
+                : userService.findByNameAndPassword(username, password);
+        if (user != null) {
+            request.getSession().setAttribute("user", user);
+            String token = jwtUtil.createJWT(user.getId(), user.getNickname(), "user");
+            Map<String, String> map = new HashMap<>();
+            map.put("id", user.getId());
+            map.put("token", token);
+            map.put("name", StringUtils.isEmpty(user.getNickname()) ? user.getName() : user.getNickname());
+            map.put("avator", user.getAvator());
+            return ResultUtil.success(map, "登录成功");
 
-		} else {
-			return ResultUtil.error("用户名或密码错误");
-		}
-	}
+        } else {
+            return ResultUtil.error("用户名或密码错误");
+        }
+    }
 
-	/**
-	 * 用户注销
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 */
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		request.getSession().setAttribute("user", null);
-		response.sendRedirect(request.getContextPath() + "/dist/view");
+    /**
+     * 用户注销
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.getSession().setAttribute("user", null);
+        response.sendRedirect(request.getContextPath() + "/dist/view");
 
-	}
+    }
 
 }

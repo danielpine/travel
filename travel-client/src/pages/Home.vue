@@ -426,10 +426,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import mixin from '../mixins'
-// import { swiperList } from '../assets/data/swiper'
 import Swiper from '../components/Swiper'
 import MapSearch from '../components/amap/MapSearch'
-// import { getpostList } from '../api/index'
 
 export default {
   name: 'home',

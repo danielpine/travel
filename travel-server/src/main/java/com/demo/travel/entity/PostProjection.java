@@ -11,7 +11,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Projection(name = "postProjection", types = { PostProjection.class })
 public interface PostProjection {
 	Long getId();
+	String getTitle();
 	String getText();
+	String getTopic();
+	String getPostType();
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	Date getPostTime();
 	Set<Image> getImage();

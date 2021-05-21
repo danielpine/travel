@@ -23,7 +23,7 @@
               type="text"
               size="small"
               class="sub-btn pull-right"
-              @click="preview()"
+              @click="preview('postForm')"
               >预览</el-button
             ></el-col
           ><el-col :span="2">
@@ -36,6 +36,7 @@
             ></el-col
           >
         </el-row>
+        <el-divider></el-divider>
         <el-row type="flex" justify="space-between">
           <el-col :span="24"
             ><el-form-item prop="topic"
@@ -70,7 +71,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      postForm: this.initPostForm('moments'),
+      postForm: this.initPostForm('topic'),
       editorOption: {
         modules: {
           toolbar: [
@@ -104,15 +105,47 @@ export default {
     }
   },
   methods: {
-    submitForm (formName) {
+    preview (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!')
+          this.$store.commit('setTopic', this.postForm)
+          this.$router.push({ path: '/topic-preview' })
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.submitPost()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    submitPost () {
+      if (this.loginIn) {
+        this.postForm.user = `http://localhost:8080/users/${this.userId}`
+        this.$http.post('/posts', this.postForm).then(
+          response => {
+            console.log(response.data)
+            this.postForm = this.initPostForm('topic')
+            this.$router.push({ path: `/topic-view/${response.data.id}` })
+            let that = this
+            setTimeout(function () {
+              that.$store.commit('setTopic', that.postForm)
+            }, 500)
+          },
+          err => {
+            this.notify('操作失败', 'error', err)
+          }
+        )
+      } else {
+        this.notify('请先登录', 'warning')
+      }
     },
     // 失去焦点
     onEditorBlur (editor) {},
@@ -136,10 +169,14 @@ export default {
       'userId', // 用户ID
       'index', // 列表中的序号
       'loginIn', // 用户是否登录
-      'avator' // 用户头像
+      'avator', // 用户头像
+      'topic'
     ])
   },
   mounted () {
+    if (this.topic.text) {
+      this.postForm = this.topic
+    }
     console.log('this is my editor', this.editor)
   }
 }
@@ -152,5 +189,8 @@ export default {
 <style lang="css" scoped>
 .pull-right {
   float: right;
+}
+.el-input /deep/ input {
+  border: 0;
 }
 </style>

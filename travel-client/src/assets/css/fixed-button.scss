@@ -1,0 +1,10 @@
+@import "var.scss";
+@import "global.scss";
+
+.fixed-button {
+  position: fixed;
+  right: 10px;
+  top: 5px;
+  overflow: hidden;
+  z-index: 1000;
+}

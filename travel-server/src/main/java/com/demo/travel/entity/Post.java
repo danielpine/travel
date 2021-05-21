@@ -26,7 +26,10 @@ public class Post implements Serializable {
     private Long id;
 
     private String title;// 标题
-    
+
+    private String topic;// 标题
+
+    @Column(columnDefinition = "longtext")
     private String text;// 内容
 
     private String postType;// 类型 moments topic
@@ -126,5 +129,21 @@ public class Post implements Serializable {
 
     public void setPostType(String postType) {
         this.postType = postType;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }
