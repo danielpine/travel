@@ -442,7 +442,7 @@ export default {
     return {
       postList: [],
       posts: '',
-      postForm: this.initPostForm(),
+      postForm: this.initPostForm('moments'),
       location: {
         address: '',
         lng: '',
@@ -695,7 +695,7 @@ export default {
           this.$http.post('/posts', this.postForm).then(
             response => {
               console.log(response.data)
-              this.postForm = this.initPostForm()
+              this.postForm = this.initPostForm('moments')
               this.location = {}
               this.getPosts()
               this.$refs.imgupload.clearFiles()
@@ -716,8 +716,7 @@ export default {
       }
       this.$http
         .get(
-          '/posts?projection=postProjection&sort=postTime,desc',
-          this.postForm
+          '/posts/search/findByPostType?projection=postProjection&sort=postTime,desc&postType=moments'
         )
         .then(
           response => {

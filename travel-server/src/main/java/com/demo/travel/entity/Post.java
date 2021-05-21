@@ -25,7 +25,11 @@ public class Post implements Serializable {
     @GeneratedValue
     private Long id;
 
+    private String title;// 标题
+    
     private String text;// 内容
+
+    private String postType;// 类型 moments topic
 
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -114,5 +118,13 @@ public class Post implements Serializable {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public String getPostType() {
+        return postType;
+    }
+
+    public void setPostType(String postType) {
+        this.postType = postType;
     }
 }

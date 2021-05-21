@@ -10,9 +10,10 @@ const mixin = {
     ...mapGetters(['userId', 'loginIn', 'url'])
   },
   methods: {
-    initPostForm () {
+    initPostForm (postType) {
       return {
         text: '',
+        postType: postType,
         image: []
       }
     },
