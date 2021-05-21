@@ -710,8 +710,6 @@ export default {
       }
     },
     getPosts () {
-      if (this.loginIn) {
-      }
       this.$http
         .get(
           '/posts/search/findByPostType?projection=postProjection&sort=postTime,desc&postType=moments'

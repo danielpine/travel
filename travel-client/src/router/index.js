@@ -24,6 +24,11 @@ const router = {
       component: () => import('@/pages/Home')
     },
     {
+      path: '/topics',
+      name: 'topics',
+      component: () => import('@/pages/Topics')
+    },
+    {
       path: '/topic-new',
       name: 'topic-new',
       component: () => import('@/pages/TopicNew')

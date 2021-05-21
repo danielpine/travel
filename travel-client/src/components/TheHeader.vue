@@ -151,7 +151,7 @@ export default {
         this.$store.commit('setUserId', null)
         this.$store.commit('setUsername', null)
         this.$store.commit('setAvator', null)
-        this.$router.go(0)
+        this.goHome()
       }
     },
     goSearch () {

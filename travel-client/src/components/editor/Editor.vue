@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ postForm }}
     <el-form
       :model="postForm"
       :rules="rules"
