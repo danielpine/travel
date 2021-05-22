@@ -72,6 +72,36 @@ const mixin = {
         return Y + '-' + M + '-' + D + ' ' + H + ':' + m
       }
     },
+    getThumb (item, thumblocation) {
+      this.$http.get(thumblocation).then(
+        response => {
+          console.log(response)
+          item.thumb = response.data._embedded.thumbs
+        },
+        err => {
+          console.log(err)
+          this.notify('操作失败', 'error')
+        }
+      )
+    },
+    isFavorite (item) {
+      if (this.loginIn) {
+        this.$http
+          .get(
+            `favorites/search/findByPostIdAndUserId?postId=${item.id}&userId=${this.userId}`
+          )
+          .then(
+            response => {
+              console.log(response)
+              this.$set(item, 'favorite', response.data)
+            },
+            err => {
+              console.log(err)
+              this.$set(item, 'favorite', null)
+            }
+          )
+      }
+    },
     getThumbColor(item) {
       let style = {}
       item.thumbed = false
@@ -79,15 +109,11 @@ const mixin = {
         if (element.userId === this.userId) {
           style = { color: 'coral' }
           item.thumbed = true
-          item.userThumb = element._links.self.href
+          item.userThumb =  `http://localhost:8080/thumbs/${element.id}`
         }
       })
       return style
     },
-    fetchThumb(id) {
-      return `呵呵 ${id}`
-    },
-    // 提示信息
     notify(title, type, message) {
       this.$notify({
         title: title,

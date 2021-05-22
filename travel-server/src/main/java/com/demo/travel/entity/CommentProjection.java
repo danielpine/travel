@@ -5,7 +5,7 @@ import org.springframework.data.rest.core.config.Projection;
 import java.util.Date;
 import java.util.List;
 
-@Projection(name = "commentProjection", types = {Comment.class})
+@Projection(name = "commentProjection", types = {CommentProjection.class})
 public interface CommentProjection {
 
     Long getId();

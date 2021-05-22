@@ -78,9 +78,9 @@
         @select="handleSelect"
       >
         <el-menu-item index="1">最新</el-menu-item>
-        <el-menu-item index="2">热门</el-menu-item>
+        <!-- <el-menu-item index="2">热门</el-menu-item> -->
         <el-menu-item index="3">推荐</el-menu-item>
-        <el-menu-item index="4">猜你喜欢</el-menu-item>
+        <!-- <el-menu-item index="4">猜你喜欢</el-menu-item> -->
       </el-menu>
     </div>
 
@@ -532,36 +532,6 @@ export default {
       } else {
         this.notify('请先登录', 'warning')
       }
-    },
-    isFavorite (item) {
-      if (this.loginIn) {
-        this.$http
-          .get(
-            `favorites/search/findByPostIdAndUserId?postId=${item.id}&userId=${this.userId}`
-          )
-          .then(
-            response => {
-              console.log(response)
-              this.$set(item, 'favorite', response.data)
-            },
-            err => {
-              console.log(err)
-              this.$set(item, 'favorite', null)
-            }
-          )
-      }
-    },
-    getThumb (item, thumblocation) {
-      this.$http.get(thumblocation).then(
-        response => {
-          console.log(response)
-          item.thumb = response.data._embedded.thumbs
-        },
-        err => {
-          console.log(err)
-          this.notify('操作失败', 'error')
-        }
-      )
     },
     toggleThumb (item, post, thumblocation) {
       if (this.loginIn) {

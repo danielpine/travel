@@ -20,10 +20,10 @@
           mode="horizontal"
           @select="handleSelect"
         >
-          <el-menu-item index="1">最新</el-menu-item>
-          <el-menu-item index="2">热门</el-menu-item>
-          <el-menu-item index="3">推荐</el-menu-item>
-          <el-menu-item index="4">猜你喜欢</el-menu-item>
+          <el-menu-item index="latest">最新</el-menu-item>
+          <!-- <el-menu-item index="2">热门</el-menu-item> -->
+          <el-menu-item index="recommend">推荐</el-menu-item>
+          <!-- <el-menu-item index="4">猜你喜欢</el-menu-item> -->
         </el-menu>
       </div>
       <el-table :data="postList" style="width: 100%">
@@ -65,7 +65,8 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      postList: []
+      postList: [],
+      activeIndex: 'latest'
     }
   },
   computed: {
@@ -78,10 +79,18 @@ export default {
     ])
   },
   mounted () {
-    this.getPosts()
+    this.getLatestPosts()
   },
   methods: {
-    getPosts () {
+    handleSelect (key, keyPath) {
+      console.log(key, keyPath)
+      if (key === 'recommend') {
+        this.getRecommendPosts()
+      } else {
+        this.getLatestPosts()
+      }
+    },
+    getLatestPosts () {
       this.$http
         .get(
           '/posts/search/findByPostType?projection=postProjection&sort=postTime,desc&postType=topic'
@@ -90,6 +99,19 @@ export default {
           response => {
             console.log(response.data)
             this.postList = response.data._embedded.posts
+          },
+          err => {
+            console.log(err)
+          }
+        )
+    },
+    getRecommendPosts () {
+      this.$http
+        .get(`/posts/recommend?userId=${this.userId}&postType=topic`)
+        .then(
+          response => {
+            console.log(response.data)
+            this.postList = response.data.data
           },
           err => {
             console.log(err)
