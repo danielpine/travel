@@ -1,120 +1,207 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>订单列表</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}"  media="all">
-    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+<meta charset="UTF-8" />
+<title>举报列表</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}"
+	media="all">
+<link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}"
+	media="all">
 </head>
 <body>
-<div class="layui-fluid">
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-md12">
-            <div class="layui-card">
-                <div class="layui-card-header">订单列表</div>
-                <div class="layui-card-body">
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<div class="layui-card">
+					<div class="layui-card-header">举报列表</div>
+					<div class="layui-card-body">
 
-                    <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload"></table>
+						<table class="layui-hide" id="test-table-reload"
+							lay-filter="test-table-reload"></table>
 
-                    <script type="text/html" id="barlist">
-                        <a class="layui-btn layui-btn-xs" lay-event="edit">发票</a>
-
+						<script type="text/html" id="barlist">
+                        <a class="layui-btn layui-btn-xs" lay-event="look">查看</a>
+                        <a class="layui-btn layui-btn-xs" lay-event="yes">封禁</a>
+                        <a class="layui-btn layui-btn-xs" lay-event="no">拒绝</a>
                     </script>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-<script th:src="@{/layuiadmin/layui/layui.js}"></script>
-<script>
-    layui.use('table', function(){
-        var table = layui.table;
+	<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+	<script th:src="@{/js/jquery.js}"></script>
+	<script>
+		function bindOn(table) {
+			table.on('tool(test-table-reload)', function(obj) {
+				var data = obj.data;
+				console.log(data)
+				if (obj.event === 'look') {
+					if (data.postType == '话题') {
+						window.open('http://localhost:8082/#/topic-view/'
+								+ data.postId)
+					} else if (data.postType == '动态') {
+						window.open('http://localhost:8082/#/moments-view/'
+								+ data.postId)
+					}
+				} else if (data.status === "已处理") {
+					alert("已处理！")
+				} else if (obj.event === 'yes') {
+					layer.confirm('确定封禁' + data.postId + '吗？', function(index) {
+						layer.close(index);
+						$.ajax({
+							url : "/posts/" + data.postId,
+							type : "PATCH",
+							headers : {
+								'Content-Type' : 'application/json'
+							},
+							data : JSON.stringify({
+								"status" : "banned"
+							}),
+							success : function(res) {
+								console.log(res)
+								$.ajax({
+									url : "/reports/" + data.id,
+									type : "PATCH",
+									headers : {
+										'Content-Type' : 'application/json'
+									},
+									data : JSON.stringify({
+										"status" : "已处理"
+									}),
+									success : function(res) {
+										console.log(res)
+										load()
+									},
+									error : function(res) {
+										console.log(res)
+									}
+								})
+							},
+							error : function(res) {
+								console.log(res)
+							}
+						})
 
-        //方法级渲染
-        table.render({
-            elem: '#test-table-reload'
-            ,url: 'http://localhost:8080/orders'
-            ,cols: [
-                [
-                    {checkbox: true, fixed: true}
-                    ,{field:'id', title: '订单号', width:180, sort: true, align:'center'}
-                    ,{field:'scenicname', title: '景点名称', width:130,  align:'center'}
-                    ,{field:'username', title: '姓名', width:120, align:'center'}
-                    ,{field:'phone', title: '手机', width:150, align:'center'}
-                    ,{field:'qty', title: '票数', width:100,sort: true, align:'center'}
-                    ,{field:'payment', title: '总价', width:100,sort: true, align:'center'}
-                    ,{field:'paytime', title: '下单时间', width:180,sort: true, align:'center'}
-                    ,{field:'status', title: '状态',width:100, align:'center',
-                    templet:function (d) {
-                        if (d.status == 0){
-                               return "已下单";
-                        }else {
-                               return "以发货";
-                        }
-                    }}
-                    ,{width:136, title:'操作', align:'center', toolbar: '#barlist'}
-                ]
-            ]
-            ,page: true
-            ,height: 470
-        });
-
-        //监听工具条
-        table.on('tool(test-table-reload)', function(obj){
-            //var data = JSON.stringify({id:obj.id});
-            var data = obj.data;
-            var id = JSON.stringify({id:data.id});
-            if(obj.event === 'edit'){
-                layer.confirm('确定发票吗？', function(index){
-                    layer.close(index);
-                    $.ajax({
-                        type: "PUT",
-                        url: "/orders/"+ data.id ,
-                        data: id,
-                        dataType: "json",
-                        contentType: "application/json;charset=utf-8",
-                        success: function(result) {
-                            if(result.code == 0) {
-                                layer.msg(result.message,{icon: 1});
-                            } else {
-                                layer.msg(result.message, {
-                                    icon: 5
-                                });
-                            }
-                        }
-                    });
-                });
-            }
-        });
-
-        var $ = layui.$, active = {
-            reload: function(){
-                var demoReload = $('#test-table-demoReload');
-
-                //执行重载
-                table.reload('test-table-reload', {
-                    page: {
-                        curr: 1 //重新从第 1 页开始
-                    }
-                    ,where: {
-                        key: {
-                            id: demoReload.val()
-                        }
-                    }
-                });
-            }
-        };
-
-        $('.test-table-reload-btn .layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
-        });
-
-    });
-</script>
+					});
+				} else if (obj.event === 'no') {
+					layer.confirm('确定拒绝吗？', function(index) {
+						layer.close(index);
+						$.ajax({
+							url : "/reports/" + data.id,
+							type : "PATCH",
+							headers : {
+								'Content-Type' : 'application/json'
+							},
+							data : JSON.stringify({
+								"status" : "已处理"
+							}),
+							success : function(res) {
+								console.log(res)
+								load()
+							},
+							error : function(res) {
+								console.log(res)
+							}
+						})
+					});
+				}
+			});
+		}
+		function load() {
+			$
+					.ajax({
+						url : "/reports",
+						type : "GET",
+						dataType : 'json',
+						success : function(res) {
+							console.log(res._embedded.reports)
+							var reports = res._embedded.reports
+							var data = []
+							for ( var i in reports) {
+								var r = reports[i]
+								console.log(r)
+								data
+										.push({
+											id : r.id,
+											reportType : r.reportType,
+											status : r.status,
+											postType : r.post.postType == "topic" ? '话题'
+													: '动态',
+											postId : r.post.id,
+											reportUser : r.user.nickname
+													|| r.user.name,
+											contentUser : r.post.user.nickname
+													|| r.post.user.name,
+											contentStatus : r.post.status == "banned" ? '已封禁'
+													: '正常',
+										})
+							}
+							//数据处理
+							layui.use('table', function() {
+								var table = layui.table;
+								table.render({
+									elem : '#test-table-reload',
+									cols : [ [ {
+										field : 'id',
+										title : '编号',
+										width : 180,
+										sort : true,
+										align : 'center'
+									}, {
+										field : 'reportUser',
+										title : '举报人',
+										width : 130,
+										align : 'center'
+									}, {
+										field : 'reportType',
+										title : '举报类型',
+										width : 130,
+										align : 'center'
+									}, {
+										field : 'status',
+										title : '状态',
+										width : 120,
+										align : 'center'
+									}, {
+										field : 'postType',
+										title : '内容类型',
+										width : 150,
+										align : 'center'
+									}, {
+										field : 'postId',
+										title : '内容编号',
+										width : 150,
+										align : 'center'
+									}, {
+										field : 'contentStatus',
+										title : '内容状态',
+										width : 150,
+										align : 'center'
+									}, {
+										field : 'contentUser',
+										title : '内容作者',
+										width : 150,
+										align : 'center'
+									}, {
+										width : 200,
+										title : '操作',
+										align : 'center',
+										toolbar : '#barlist'
+									} ] ],
+									data : data
+								});
+								bindOn(table)
+							});
+						}
+					});
+		}
+		load()
+	</script>
 </body>
 </html>

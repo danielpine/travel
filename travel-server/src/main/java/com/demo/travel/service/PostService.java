@@ -25,82 +25,83 @@ import com.demo.travel.entity.Post;
 @Transactional
 public class PostService {
 
-    @Autowired
-    private PostDao postDao;
+	@Autowired
+	private PostDao postDao;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    public List<Post> recommend(Long userId, String postType) {
-        Session session = (Session) entityManager.getDelegate();
-        ArrayList<FavoriteTopicProjection> list = new ArrayList<>();
-        List<FavoriteTopicProjection> favoriteTopics = postDao.findFavoriteTopic(userId, postType);
-        list.addAll(favoriteTopics);
-        List<FavoriteTopicProjection> thumbTopics = postDao.findThumbFavoriteTopic(userId, postType);
-        list.addAll(thumbTopics);
-        List<FavoriteTopicProjection> commentTopics = postDao.findCommentFavoriteTopic(userId, postType);
-        list.addAll(commentTopics);
-        if (!favoriteTopics.isEmpty()) {
-            Map<String, List<FavoriteTopicProjection>> map = list.stream().collect(
-                    Collectors.groupingBy(FavoriteTopicProjection::getTopic));
-            Integer sum = map.values().stream().mapToInt(List::size).reduce(Integer::sum).orElse(0);
-            ArrayList<Topic> topics = new ArrayList<>();
-            map.forEach((topic, habitualList) -> {
-                Topic t = new Topic();
-                t.setScore(habitualList.size());
-                t.setTopic(topic);
-                topics.add(t);
-                System.out.println(t);
-            });
-            topics.sort((a, b) -> b.getScore() - a.getScore());
-            ArrayList<Post> recommendPostList = new ArrayList<>();
-            topics.stream().forEach(t -> {
-                String topic = t.getTopic();
-                Integer score = t.getScore();
-                Integer limit = (int) Math.ceil(((((float) score) / sum) * 20));
-                System.out.println("limit size " + limit);
-                @SuppressWarnings("unchecked")
-                Query<Post> query = session.createQuery("from Post where postType=:postType and topic=:topic")
-                        .setFirstResult(0).setMaxResults(limit);
-                query.setParameter("postType", postType);
-                query.setParameter("topic", topic);
-                List<Post> postList = query.list();
-                System.out.println("postList size " + topic + " " + postList.size());
-                recommendPostList.addAll(postList);
-            });
-            return recommendPostList;
-        } else {
-            Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "postTime");
-            Pageable pageable = PageRequest.of(0, 20, sort);
-            return postDao.findByPostType("topic", pageable).stream().collect(Collectors.toList());
-        }
-    }
+	public List<Post> recommend(Long userId, String postType) {
+		Session session = (Session) entityManager.getDelegate();
+		ArrayList<FavoriteTopicProjection> list = new ArrayList<>();
+		List<FavoriteTopicProjection> favoriteTopics = postDao.findFavoriteTopic(userId, postType);
+		list.addAll(favoriteTopics);
+		List<FavoriteTopicProjection> thumbTopics = postDao.findThumbFavoriteTopic(userId, postType);
+		list.addAll(thumbTopics);
+		List<FavoriteTopicProjection> commentTopics = postDao.findCommentFavoriteTopic(userId, postType);
+		list.addAll(commentTopics);
+		if (!favoriteTopics.isEmpty()) {
+			Map<String, List<FavoriteTopicProjection>> map = list.stream().collect(
+			        Collectors.groupingBy(FavoriteTopicProjection::getTopic));
+			Integer sum = map.values().stream().mapToInt(List::size).reduce(Integer::sum).orElse(0);
+			ArrayList<Topic> topics = new ArrayList<>();
+			map.forEach((topic, habitualList) -> {
+				Topic t = new Topic();
+				t.setScore(habitualList.size());
+				t.setTopic(topic);
+				topics.add(t);
+				System.out.println(t);
+			});
+			topics.sort((a, b) -> b.getScore() - a.getScore());
+			ArrayList<Post> recommendPostList = new ArrayList<>();
+			topics.stream().forEach(t -> {
+				String topic = t.getTopic();
+				Integer score = t.getScore();
+				Integer limit = (int) Math.ceil(((((float) score) / sum) * 20));
+				System.out.println("limit size " + limit);
+				@SuppressWarnings("unchecked")
+				Query<Post> query = session
+				        .createQuery("from Post where postType=:postType and topic=:topic and status='normal'")
+				        .setFirstResult(0).setMaxResults(limit);
+				query.setParameter("postType", postType);
+				query.setParameter("topic", topic);
+				List<Post> postList = query.list();
+				System.out.println("postList size " + topic + " " + postList.size());
+				recommendPostList.addAll(postList);
+			});
+			return recommendPostList;
+		} else {
+			Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "postTime");
+			Pageable pageable = PageRequest.of(0, 20, sort);
+			return postDao.findByPostType("topic", pageable).stream().collect(Collectors.toList());
+		}
+	}
 
-    class Topic {
-        String topic;
-        Integer score;
+	class Topic {
+		String topic;
+		Integer score;
 
-        public String getTopic() {
-            return topic;
-        }
+		public String getTopic() {
+			return topic;
+		}
 
-        public void setTopic(String topic) {
-            this.topic = topic;
-        }
+		public void setTopic(String topic) {
+			this.topic = topic;
+		}
 
-        public Integer getScore() {
-            return score;
-        }
+		public Integer getScore() {
+			return score;
+		}
 
-        public void setScore(Integer score) {
-            this.score = score;
-        }
+		public void setScore(Integer score) {
+			this.score = score;
+		}
 
-        @Override
-        public String toString() {
-            return "Topic [topic=" + topic + ", score=" + score + "]";
-        }
+		@Override
+		public String toString() {
+			return "Topic [topic=" + topic + ", score=" + score + "]";
+		}
 
-    }
+	}
 
 }

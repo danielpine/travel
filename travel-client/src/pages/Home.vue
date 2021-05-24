@@ -83,45 +83,49 @@
     </div> -->
 
     <div class="section" v-for="(item, index) in postList" :key="index">
-      <el-row class="section-content">
-        <el-col :span="1">
-          <div class="section-user">
-            <img
-              :src="attachImageUrl((item.user && item.user.avator) || avator)"
-              alt=""
-            />
-          </div>
-        </el-col>
-        <el-col :span="21" :offset="1">
-          <el-row
-            ><h4>
-              {{
-                (item.user && item.user.nickname) ||
-                  (item.user && item.user.name) ||
-                  '用户'
-              }}
-            </h4></el-row
-          >
-          <el-row class="section-timestamp">{{ item.postTime }}</el-row>
-          <el-row>{{ item.text }}</el-row>
-          <el-row v-if="item.image" style="width:612px">
-            <el-image
-              v-for="(img, index) in item.image"
-              :key="index"
-              style="margin:2px 2px 2px 2px"
-              :style="getImageWidthHeightDynamic(item.image.length)"
-              :src="attachImageUrl(img.url)"
-              :preview-src-list="attachImageUrlList(item.image)"
+      <el-link
+        @click="$router.push({ path: `/moments-view/${item.id}` })"
+      >
+        <el-row class="section-content">
+          <el-col :span="1">
+            <div class="section-user">
+              <img
+                :src="attachImageUrl((item.user && item.user.avator) || avator)"
+                alt=""
+              />
+            </div>
+          </el-col>
+          <el-col :span="21" :offset="1">
+            <el-row
+              ><h4>
+                {{
+                  (item.user && item.user.nickname) ||
+                    (item.user && item.user.name) ||
+                    '用户'
+                }}
+              </h4></el-row
             >
-            </el-image>
-          </el-row>
-          <el-row v-if="item.location">
-            <el-link icon="el-icon-location-outline">{{
-              item.location.address
-            }}</el-link>
-          </el-row>
-        </el-col>
-      </el-row>
+            <el-row class="section-timestamp">{{ item.postTime }}</el-row>
+            <el-row>{{ item.text }}</el-row>
+            <el-row v-if="item.image" style="width:612px">
+              <el-image
+                v-for="(img, index) in item.image"
+                :key="index"
+                style="margin:2px 2px 2px 2px"
+                :style="getImageWidthHeightDynamic(item.image.length)"
+                :src="attachImageUrl(img.url)"
+                :preview-src-list="attachImageUrlList(item.image)"
+              >
+              </el-image>
+            </el-row>
+            <el-row v-if="item.location">
+              <el-link icon="el-icon-location-outline">{{
+                item.location.address
+              }}</el-link>
+            </el-row>
+          </el-col>
+        </el-row>
+      </el-link>
       <el-divider></el-divider>
       <el-row class="section-bottom" type="flex" justify="space-between">
         <el-col :span="6"

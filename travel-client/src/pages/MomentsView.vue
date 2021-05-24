@@ -1,11 +1,49 @@
 <template>
   <div class="container">
     <div v-if="topic.text" class="topic-section">
-      <div v-if="topic.status == 'banned'">
-        该内容已被封禁
-      </div>
-      <div v-else>
-        <topic-view :topic="topic"></topic-view>
+      <div v-if="topic.status == 'normal'">
+        <el-row class="section-content">
+          <el-col :span="1">
+            <div class="section-user">
+              <img
+                :src="
+                  attachImageUrl((topic.user && topic.user.avator) || avator)
+                "
+                alt=""
+              />
+            </div>
+          </el-col>
+          <el-col :span="21" :offset="1">
+            <el-row
+              ><h4>
+                {{
+                  (topic.user && topic.user.nickname) ||
+                    (topic.user && topic.user.name) ||
+                    '用户'
+                }}
+              </h4></el-row
+            >
+            <el-row class="section-timestamp">{{ topic.postTime }}</el-row>
+            <el-row>{{ topic.text }}</el-row>
+            <el-row v-if="topic.image" style="width:612px">
+              <el-image
+                v-for="(img, index) in topic.image"
+                :key="index"
+                style="margin:2px 2px 2px 2px"
+                :style="getImageWidthHeightDynamic(topic.image.length)"
+                :src="attachImageUrl(img.url)"
+                :preview-src-list="attachImageUrlList(topic.image)"
+              >
+              </el-image>
+            </el-row>
+            <el-row v-if="topic.location">
+              <el-link icon="el-icon-location-outline">{{
+                topic.location.address
+              }}</el-link>
+            </el-row>
+          </el-col>
+        </el-row>
+        <el-divider></el-divider>
         <el-row class="section-bottom" type="flex" justify="space-between">
           <el-col :span="6"
             ><el-button
@@ -310,7 +348,11 @@
           </div>
         </el-row>
       </div>
+      <div v-else>
+        该内容已被封禁
+      </div>
     </div>
+    <!-- <fixed-button :fun="goTopicEdit"></fixed-button> -->
   </div>
 </template>
 
@@ -498,7 +540,7 @@ export default {
     getPost () {
       this.$http
         .get(
-          `/posts/search/findByIdAndPostType?id=${this.$route.params.postId}&postType=topic&projection=postProjection`
+          `/posts/search/findByIdAndPostType?id=${this.$route.params.postId}&postType=moments&projection=postProjection`
         )
         .then(
           response => {

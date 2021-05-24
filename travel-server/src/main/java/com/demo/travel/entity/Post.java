@@ -38,6 +38,8 @@ public class Post implements Serializable {
 
 	private String title;// 标题
 
+	private String status = "normal";
+
 	private String topic;// 标题
 
 	@Column(columnDefinition = "longtext")
@@ -161,6 +163,14 @@ public class Post implements Serializable {
 	@Override
 	public String toString() {
 		return "Post [id=" + id + ", topic=" + topic + "]";
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

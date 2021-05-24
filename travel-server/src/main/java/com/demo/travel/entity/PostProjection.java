@@ -14,6 +14,7 @@ public interface PostProjection {
 	String getTitle();
 	String getText();
 	String getTopic();
+	String getStatus();
 	String getPostType();
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	Date getPostTime();

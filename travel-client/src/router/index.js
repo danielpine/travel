@@ -44,6 +44,11 @@ const router = {
       component: () => import('@/pages/TopicView')
     },
     {
+      path: '/moments-view/:postId',
+      name: 'moments-view',
+      component: () => import('@/pages/MomentsView')
+    },
+    {
       path: '/search',
       name: 'search',
       component: () => import('@/pages/Search')
