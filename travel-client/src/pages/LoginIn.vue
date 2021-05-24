@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import LoginLogo from '../components/LoginLogo'
 import mixin from '../mixins'
 import { loginIn } from '../api/index'
 
@@ -44,7 +43,6 @@ export default {
   name: 'login-in',
   mixins: [mixin],
   components: {
-    LoginLogo
   },
   data: function () {
     let validateName = (rule, value, callback) => {

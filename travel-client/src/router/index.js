@@ -44,31 +44,6 @@ const router = {
       component: () => import('@/pages/TopicView')
     },
     {
-      path: '/my-music',
-      name: 'my-music',
-      component: () => import('@/pages/MyMusic')
-    },
-    {
-      path: '/song-list-album/:id',
-      name: 'song-list-album',
-      component: () => import('@/pages/SongListAlbum')
-    },
-    {
-      path: '/singer',
-      name: 'singer',
-      component: () => import('@/pages/Singer')
-    },
-    {
-      path: '/singer-album/:id',
-      name: 'singer-album',
-      component: () => import('@/pages/SingerAlbum')
-    },
-    {
-      path: '/lyric/:id',
-      name: 'lyric',
-      component: () => import('@/pages/Lyric')
-    },
-    {
       path: '/search',
       name: 'search',
       component: () => import('@/pages/Search')

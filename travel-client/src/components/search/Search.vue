@@ -1,19 +1,17 @@
 <template>
   <div class="search-songs">
-    <album-content :songList="listOfSongs"></album-content>
+    <!-- <album-content :songList="listOfSongs"></album-content> -->
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import mixin from '../../mixins'
-import AlbumContent from '../AlbumContent'
 
 export default {
   name: 'search-songs',
   mixins: [mixin],
   components: {
-    AlbumContent
   },
   computed: {
     ...mapGetters([

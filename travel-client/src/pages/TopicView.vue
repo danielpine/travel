@@ -14,9 +14,9 @@
             {{ topic.favorite ? '已收藏' : '收藏' }}</el-button
           ></el-col
         >
-        <el-col :span="6"
-          ><el-button type="text" icon="el-icon-close">举报</el-button></el-col
-        >
+        <el-col :span="6">
+          <report :item="topic"></report>
+        </el-col>
         <el-col :span="6"
           ><el-button
             type="text"
@@ -302,6 +302,7 @@
 
 <script>
 import TopicView from '../components/TopicView'
+import Report from '../components/Report'
 import FixedButton from '../components/FixedButton'
 import { mapGetters } from 'vuex'
 import mixin from '../mixins'
@@ -310,6 +311,7 @@ export default {
   mixins: [mixin],
   components: {
     TopicView,
+    Report,
     FixedButton
   },
   data () {

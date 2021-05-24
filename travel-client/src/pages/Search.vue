@@ -1,16 +1,24 @@
 <template>
   <div class="search">
     <nav class="searchList-nav" ref="change">
-      <span :class="{isActive: toggle === 'Songs'}" @click="handleChangeView('Songs', 0)">歌曲</span>
-      <span :class="{isActive: toggle === 'SongLists'}" @click="handleChangeView('SongLists', 1)">歌单</span>
+      <span
+        :class="{ isActive: toggle === 'search' }"
+        @click="handleChangeView('search', 0)"
+        >1</span
+      >
+      <span
+        :class="{ isActive: toggle === 'searchLists' }"
+        @click="handleChangeView('searchLists', 1)"
+        >2</span
+      >
     </nav>
     <component :is="currentView"></component>
   </div>
 </template>
 
 <script>
-import searchSongs from '../components/search/SearchSongs'
-import searchSongLists from '../components/search/SearchSongLists'
+import search from '../components/search/Search'
+import searchLists from '../components/search/SearchLists'
 import { mapGetters } from 'vuex'
 import mixin from '../mixins'
 
@@ -18,19 +26,17 @@ export default {
   name: 'search',
   mixins: [mixin],
   components: {
-    searchSongs,
-    searchSongLists
+    search,
+    searchLists
   },
   data () {
     return {
-      toggle: 'Songs',
-      currentView: 'searchSongs'
+      toggle: 'search',
+      currentView: 'search'
     }
   },
   computed: {
-    ...mapGetters([
-      'searchword'
-    ])
+    ...mapGetters(['searchword'])
   },
   watch: {
     searchword: function () {
@@ -38,9 +44,8 @@ export default {
     }
   },
   methods: {
-    // 切换组件
     handleChangeView: function (component) {
-      this.currentView = 'search' + component
+      this.currentView = component
       this.toggle = component
     }
   }

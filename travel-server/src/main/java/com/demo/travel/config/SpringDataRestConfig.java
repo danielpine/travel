@@ -1,6 +1,7 @@
 package com.demo.travel.config;
 
 import com.demo.travel.entity.Comment;
+import com.demo.travel.entity.Favorite;
 import com.demo.travel.entity.Post;
 import com.demo.travel.entity.User;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,7 @@ public class SpringDataRestConfig {
         return new RepositoryRestConfigurerAdapter() {
             @Override
             public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-                config.exposeIdsFor(Comment.class, User.class, Post.class);
+                config.exposeIdsFor(Comment.class, User.class, Post.class, Favorite.class);
             }
         };
     }

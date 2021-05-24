@@ -104,7 +104,6 @@ export default {
     // 提交评论
     postComment () {
       if (this.loginIn) {
-        // 0 代表歌曲， 1 代表歌单
         let params = new URLSearchParams()
         if (this.type === 1) {
           params.append('songListId', this.playId)

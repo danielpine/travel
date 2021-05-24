@@ -70,7 +70,7 @@
       </el-row>
     </div>
 
-    <div class="section">
+    <!-- <div class="section">
       <el-menu
         :default-active="activeIndex"
         class="section-el-menu"
@@ -78,11 +78,9 @@
         @select="handleSelect"
       >
         <el-menu-item index="1">最新</el-menu-item>
-        <!-- <el-menu-item index="2">热门</el-menu-item> -->
         <el-menu-item index="3">推荐</el-menu-item>
-        <!-- <el-menu-item index="4">猜你喜欢</el-menu-item> -->
       </el-menu>
-    </div>
+    </div> -->
 
     <div class="section" v-for="(item, index) in postList" :key="index">
       <el-row class="section-content">
@@ -137,9 +135,9 @@
             {{ item.favorite ? '已收藏' : '收藏' }}</el-button
           ></el-col
         >
-        <el-col :span="6"
-          ><el-button type="text" icon="el-icon-close">举报</el-button></el-col
-        >
+        <el-col :span="6">
+          <report :item="item"></report>
+        </el-col>
         <el-col :span="6"
           ><el-button
             type="text"
@@ -426,14 +424,14 @@
 <script>
 import { mapGetters } from 'vuex'
 import mixin from '../mixins'
-import Swiper from '../components/Swiper'
+import Report from '../components/Report'
 import MapSearch from '../components/amap/MapSearch'
 
 export default {
   name: 'home',
   mixins: [mixin],
   components: {
-    Swiper,
+    Report,
     MapSearch
   },
   data () {
@@ -450,7 +448,8 @@ export default {
       commentShow: {},
       fileList: [],
       activeIndex: '1',
-      visible: true
+      visible: true,
+      labels: ['垃圾营销', '涉黄信息', '人身攻击', '有害信息', '违法信息']
     }
   },
   computed: {
@@ -634,6 +633,28 @@ export default {
     },
     handlePreview (file) {
       console.log(file)
+    },
+    report (item) {
+      if (this.loginIn) {
+        this.$http
+          .post('/reports', {
+            user: `http://localhost:8080/users/${this.userId}`,
+            post: `http://localhost:8080/posts/${item.id}`,
+            reportType: item.radio
+          })
+          .then(
+            response => {
+              this.notify('举报成功', 'success')
+            },
+            err => {
+              console.log(err)
+              this.notify('请勿重复举报', 'error')
+            }
+          )
+        item.visible = false
+      } else {
+        this.notify('请先登录', 'warning')
+      }
     },
     putPost () {
       if (this.loginIn) {
