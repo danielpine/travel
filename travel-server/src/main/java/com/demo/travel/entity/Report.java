@@ -1,5 +1,8 @@
 package com.demo.travel.entity;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -21,8 +24,9 @@ public class Report implements Serializable {
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToOne(targetEntity = Post.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Post.class)
     @JoinColumn(name = "postId")
+    @NotFound(action = NotFoundAction.IGNORE)
     private Post post;
 
     public Long getId() {

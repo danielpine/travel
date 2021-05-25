@@ -16,6 +16,16 @@
             >
           </template>
         </el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status == 'banned'" style="color:red"
+              >已封禁</span
+            >
+            <span v-if="scope.row.status == 'normal'" style="color:green"
+              >正常</span
+            >
+          </template>
+        </el-table-column>
         <el-table-column prop="postTime" label="发表时间"></el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">

@@ -23,11 +23,11 @@
 						<table class="layui-hide" id="test-table-reload"
 							lay-filter="test-table-reload"></table>
 
-						<script type="text/html" id="barlist">
-                        <a class="layui-btn layui-btn-xs" lay-event="look">查看</a>
-                        <a class="layui-btn layui-btn-xs" lay-event="yes">封禁</a>
-                        <a class="layui-btn layui-btn-xs" lay-event="no">拒绝</a>
-                    </script>
+                        <script type="text/html" id="barlist">
+                            <a class="layui-btn layui-btn-xs" lay-event="look">查看</a>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="yes">封禁</a>
+                            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="no">拒绝</a>
+                        </script>
 					</div>
 				</div>
 			</div>
@@ -131,15 +131,15 @@
 											id : r.id,
 											reportType : r.reportType,
 											status : r.status,
-											postType : r.post.postType == "topic" ? '话题'
-													: '动态',
-											postId : r.post.id,
+											postType : r.post?( r.post.postType == "topic" ? '话题'
+													: '动态'):'已删除',
+											postId : r.post?(r.post.id):'-',
 											reportUser : r.user.nickname
 													|| r.user.name,
-											contentUser : r.post.user.nickname
-													|| r.post.user.name,
-											contentStatus : r.post.status == "banned" ? '已封禁'
-													: '正常',
+											contentUser : r.post?(r.post.user.nickname
+													|| r.post.user.name):'-',
+											contentStatus : r.post?(r.post.status == "banned" ? '已封禁'
+													: '正常'):'-',
 										})
 							}
 							//数据处理

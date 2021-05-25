@@ -12,10 +12,18 @@
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="_embedded.post.text"
-          label="内容"
-        ></el-table-column>
+        <el-table-column prop="_embedded.post.text" label="内容">
+          <template slot-scope="scope">
+            <span
+              v-if="scope.row._embedded.post.status == 'banned'"
+              style="color:red"
+              >-</span
+            >
+            <span v-if="scope.row._embedded.post.status == 'normal'">{{
+              scope.row._embedded.post.text
+            }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="回复/点赞" align="center">
           <template slot-scope="scope">
             <span
@@ -28,6 +36,20 @@
                   ? '-'
                   : scope.row._embedded.post.thumb.length
               }}</span
+            >
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span
+              v-if="scope.row._embedded.post.status == 'banned'"
+              style="color:red"
+              >已封禁</span
+            >
+            <span
+              v-if="scope.row._embedded.post.status == 'normal'"
+              style="color:green"
+              >正常</span
             >
           </template>
         </el-table-column>
@@ -89,6 +111,20 @@
                   ? '-'
                   : scope.row._embedded.post.thumb.length
               }}</span
+            >
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span
+              v-if="scope.row._embedded.post.status == 'banned'"
+              style="color:red"
+              >已封禁</span
+            >
+            <span
+              v-if="scope.row._embedded.post.status == 'normal'"
+              style="color:green"
+              >正常</span
             >
           </template>
         </el-table-column>
